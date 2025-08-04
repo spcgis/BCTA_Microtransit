@@ -708,36 +708,52 @@ require([
 
     // Add pointer-move handler for tooltips
     view.on("pointer-move", function(event) {
-        if (selectedOrigins.size === 0) {
-            tooltip.style.display = "none";
-            return;
-        }
-
         view.hitTest(event).then(function(response) {
             const result = response.results.find(r =>
                 r.graphic && r.graphic.layer && r.graphic.layer.id === "BeaverCounty_BG"
             );
+            
             if (!result) {
                 tooltip.style.display = "none";
                 return;
             }
 
             const hoveredBGId = result.graphic.attributes.GEOID;
-            let totalTrips = 0;
+            let tooltipContent = `<strong>Block Group:</strong> ${hoveredBGId}`;
             
-            Object.values(tripData).forEach(originData => {
-                totalTrips += originData[hoveredBGId] || 0;
-            });
+            // Check if this is a selected origin
+            if (selectedOrigins.has(hoveredBGId)) {
+                tooltipContent += `<br><em>Selected Origin</em>`;
+                
+                // Show total outbound trips for this origin
+                const totalOutbound = Object.values(tripData[hoveredBGId] || {}).reduce((sum, trips) => sum + trips, 0);
+                if (totalOutbound > 0) {
+                    const tripType = selectedMode === "internal" ? "Internal" : "External";
+                    tooltipContent += `<br><strong>Total Outbound ${tripType} Trips:</strong> ${totalOutbound}`;
+                }
+            } else if (selectedOrigins.size > 0) {
+                // Check if this is a destination with trips
+                let totalInbound = 0;
+                
+                Object.values(tripData).forEach(originData => {
+                    totalInbound += originData[hoveredBGId] || 0;
+                });
 
-            if (totalTrips > 0) {
-                const tripType = selectedMode === "internal" ? "Internal" : "External";
-                tooltip.style.left = event.x + 10 + "px";
-                tooltip.style.top = event.y + 10 + "px";
-                tooltip.style.display = "block";
-                tooltip.innerHTML = `${tripType} Trips: ${totalTrips}`;
+                if (totalInbound > 0) {
+                    const tripType = selectedMode === "internal" ? "Internal" : "External";
+                    tooltipContent += `<br><strong>Inbound ${tripType} Trips:</strong> ${totalInbound}`;
+                } else {
+                    tooltipContent += `<br><em>No trips to this area</em>`;
+                }
             } else {
-                tooltip.style.display = "none";
+                tooltipContent += `<br><em>Click to select as origin</em>`;
             }
+            
+            // Position and show tooltip
+            tooltip.style.left = event.x + 10 + "px";
+            tooltip.style.top = event.y + 10 + "px";
+            tooltip.style.display = "block";
+            tooltip.innerHTML = tooltipContent;
         });
     });
 
