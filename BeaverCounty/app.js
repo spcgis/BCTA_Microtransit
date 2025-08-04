@@ -24,6 +24,7 @@ require([
     let clickCount = {};
     let selectedDay = "";
     let selectedTime = "";
+    let selectedMode = "internal";
 
     // Create tooltip
     const tooltip = document.createElement("div");
@@ -57,42 +58,52 @@ require([
         z-index: 1000;
     `;
 
+    // Update filterDiv innerHTML to include the mode selection dropdown
     filterDiv.innerHTML = `
-        <div style="margin-bottom: 10px;">
-            <label for="daySelect">Day of Week:</label>
-            <select id="daySelect" style="border: ${selectedDay ? '1px solid #ccc' : '1px solid #ff6b6b'}">
-                <option value="">Select Day</option>
-                <option value="1">Monday</option>
-                <option value="2">Tuesday</option>
-                <option value="3">Wednesday</option>
-                <option value="4">Thursday</option>
-                <option value="5">Friday</option>
-                <option value="6">Saturday</option>
-            </select>
-        </div>
-        <div>
-            <label for="timeSelect">Time Period:</label>
-            <select id="timeSelect" disabled style="border: ${selectedTime ? '1px solid #ccc' : '1px solid #ff6b6b'}">
-                <option value="">Select Time</option>
-                <option value="01: 6am (6am-7am)">6am-7am</option>
-                <option value="02: 7am (7am-8am)">7am-8am</option>
-                <option value="03: 8am (8am-9am)">8am-9am</option>
-                <option value="04: 9am (9am-10am)">9am-10am</option>
-                <option value="05: 10am (10am-11am)">10am-11am</option>
-                <option value="06: 11am (11am-12noon)">11am-12pm</option>
-                <option value="07: 12pm (12noon-1pm)">12pm-1pm</option>
-                <option value="08: 1pm (1pm-2pm)">1pm-2pm</option>
-                <option value="09: 2pm (2pm-3pm)">2pm-3pm</option>
-                <option value="10: 3pm (3pm-4pm)">3pm-4pm</option>
-                <option value="11: 4pm (4pm-5pm)">4pm-5pm</option>
-                <option value="12: 5pm (5pm-6pm)">5pm-6pm</option>
-                <option value="13: 6pm (6pm-7pm)">6pm-7pm</option>
-                <option value="14: 7pm (7pm-8pm)">7pm-8pm</option>
-                <option value="15: 8pm (8pm-9pm)">8pm-9pm</option>
-                <option value="16: 9pm (9pm-10pm)">9pm-10pm</option>
-                <option value="17: 10pm (10pm-11pm)">10pm-11pm</option>
-            </select>
-        </div>
+    <div style="margin-bottom: 10px;">
+        <label for="modeSelect">Trip Type:</label>
+        <select id="modeSelect" style="border: 1px solid #ccc">
+            <option value="internal">Internal Trips (Within Beaver County)</option>
+            <option value="external">External Trips (To Outside Areas)</option>
+        </select>
+    </div>
+    <div style="margin-bottom: 10px;">
+        <label for="daySelect">Day of Week:</label>
+        <select id="daySelect" style="border: ${selectedDay ? '1px solid #ccc' : '1px solid #ff6b6b'}">
+            <option value="">Select Day</option>
+            <option value="0: All Days (M-Su)">All (Mon-Sat)</option>
+            <option value="1: Monday (M-M)">Monday</option>
+            <option value="2: Tuesday (Tu-Tu)">Tuesday</option>
+            <option value="3: Wednesday (W-W)">Wednesday</option>
+            <option value="4: Thursday (Th-Th)">Thursday</option>
+            <option value="5: Friday (F-F)">Friday</option>
+            <option value="6: Saturday (Sa-Sa)">Saturday</option>
+        </select>
+    </div>
+    <div>
+        <label for="timeSelect">Time Period:</label>
+        <select id="timeSelect" disabled style="border: ${selectedTime ? '1px solid #ccc' : '1px solid #ff6b6b'}">
+            <option value="">Select Time</option>
+            <option value="ALL">All Times (6am-11pm)</option>
+            <option value="01: 6am (6am-7am)">6am-7am</option>
+            <option value="02: 7am (7am-8am)">7am-8am</option>
+            <option value="03: 8am (8am-9am)">8am-9am</option>
+            <option value="04: 9am (9am-10am)">9am-10am</option>
+            <option value="05: 10am (10am-11am)">10am-11am</option>
+            <option value="06: 11am (11am-12noon)">11am-12pm</option>
+            <option value="07: 12pm (12noon-1pm)">12pm-1pm</option>
+            <option value="08: 1pm (1pm-2pm)">1pm-2pm</option>
+            <option value="09: 2pm (2pm-3pm)">2pm-3pm</option>
+            <option value="10: 3pm (3pm-4pm)">3pm-4pm</option>
+            <option value="11: 4pm (4pm-5pm)">4pm-5pm</option>
+            <option value="12: 5pm (5pm-6pm)">5pm-6pm</option>
+            <option value="13: 6pm (6pm-7pm)">6pm-7pm</option>
+            <option value="14: 7pm (7pm-8pm)">7pm-8pm</option>
+            <option value="15: 8pm (8pm-9pm)">8pm-9pm</option>
+            <option value="16: 9pm (9pm-10pm)">9pm-10pm</option>
+            <option value="17: 10pm (10pm-11pm)">10pm-11pm</option>
+        </select>
+    </div>
     `;
     view.ui.add(filterDiv, "top-right");
 
@@ -102,8 +113,8 @@ require([
         field: "Average_Daily_O_D_Traffic__StL_",
         defaultSymbol: {
             type: "simple-fill",
-            color: [0, 0, 0, 0], // transparent for no trips
-            outline: { color: [128, 128, 128], width: 0.5 }
+            color: [180, 230, 180, 0.6], // transparent for no trips
+            outline: { color: [0, 128, 0], width: 1 }
         },
         classBreakInfos: [
             {
@@ -112,7 +123,7 @@ require([
                 symbol: {
                     type: "simple-fill",
                     color: [255, 241, 169, 0.7],
-                    outline: { color: [128, 128, 128], width: 0.5 }
+                    outline: { color: [0, 128, 0], width: 1 }
                 },
                 label: "1-5 trips"
             },
@@ -122,7 +133,7 @@ require([
                 symbol: {
                     type: "simple-fill",
                     color: [254, 204, 92, 0.7],
-                    outline: { color: [128, 128, 128], width: 0.5 }
+                    outline: { color: [0, 128, 0], width: 1 }
                 },
                 label: "6-15 trips"
             },
@@ -132,7 +143,7 @@ require([
                 symbol: {
                     type: "simple-fill",
                     color: [253, 141, 60, 0.7],
-                    outline: { color: [128, 128, 128], width: 0.5 }
+                    outline: { color: [0, 128, 0], width: 1 }
                 },
                 label: "16-25 trips"
             },
@@ -142,7 +153,7 @@ require([
                 symbol: {
                     type: "simple-fill",
                     color: [240, 59, 32, 0.7],
-                    outline: { color: [128, 128, 128], width: 0.5 }
+                    outline: { color: [0, 128, 0], width: 1 }
                 },
                 label: "26-50 trips"
             },
@@ -152,7 +163,7 @@ require([
                 symbol: {
                     type: "simple-fill",
                     color: [189, 0, 38, 0.7],
-                    outline: { color: [128, 128, 128], width: 0.5 }
+                    outline: { color: [0, 128, 0], width: 1 }
                 },
                 label: ">50 trips"
             }
@@ -171,7 +182,7 @@ require([
 
     // Layer for block group outlines (green)
     const blockGroupOutlineLayer = new FeatureLayer({
-        url: "https://services3.arcgis.com/MV5wh5WkCMqlwISp/arcgis/rest/services/BeaverCounty_Merge/FeatureServer/0",
+        url: "https://services3.arcgis.com/MV5wh5WkCMqlwISp/arcgis/rest/services/BeaverCounty_Including_External/FeatureServer/0",
         id: "BlockGroupOutline",
         outFields: ["*"],
         visible: true,
@@ -181,7 +192,7 @@ require([
 
     // Layer for trips (class breaks)
     const blockGroupTripsLayer = new FeatureLayer({
-        url: "https://services3.arcgis.com/MV5wh5WkCMqlwISp/arcgis/rest/services/BeaverCounty_Merge/FeatureServer/0",
+        url: "https://services3.arcgis.com/MV5wh5WkCMqlwISp/arcgis/rest/services/BeaverCounty_Including_External/FeatureServer/0",
         id: "BlockGroupTrips",
         outFields: ["*"],
         visible: true,
@@ -195,7 +206,7 @@ require([
 
     // Create feature layers
     const beaverCountyBG = new FeatureLayer({
-        url: "https://services3.arcgis.com/MV5wh5WkCMqlwISp/arcgis/rest/services/BeaverCounty_Merge/FeatureServer/0",
+        url: "https://services3.arcgis.com/MV5wh5WkCMqlwISp/arcgis/rest/services/BeaverCounty_Including_External/FeatureServer/0",
         id: "BeaverCounty_BG",
         outFields: ["*"],
         visible: true,
@@ -209,17 +220,20 @@ require([
         );
     });
 
-    // Modify the getODTableURL function
-    function getODTableURL(day) {
-        if (!day) return null;
-        
-        // Use the correct URL format that worked in testing
-        return `https://services3.arcgis.com/MV5wh5WkCMqlwISp/arcgis/rest/services/BeaverCounty_Merge/FeatureServer/${day}`;
+    // Modify the getODTableURL function to use different layers based on mode
+    function getODTableURL() {
+        if (selectedMode === "internal") {
+            // Internal trips (within Beaver County)
+            return "https://services3.arcgis.com/MV5wh5WkCMqlwISp/arcgis/rest/services/BeaverCounty_Including_External/FeatureServer/7";
+        } else {
+            // External trips (Beaver County to outside areas)
+            return "https://services3.arcgis.com/MV5wh5WkCMqlwISp/arcgis/rest/services/BeaverCounty_Including_External/FeatureServer/8";
+        }
     }
 
     // Modify the OD table setup
     let odTable = new FeatureLayer({
-        url: getODTableURL("1"),
+        url: getODTableURL(),
         id: "OD_Table",
         outFields: ["*"],
         visible: false,
@@ -265,11 +279,17 @@ require([
     document.getElementById("daySelect").addEventListener("change", function(e) {
         selectedDay = e.target.value;
         const timeSelect = document.getElementById("timeSelect");
-        timeSelect.disabled = !selectedDay;
+        
+        // Enable time selection for all options, including "All" (7)
         if (!selectedDay) {
+            timeSelect.disabled = true;
             timeSelect.value = "";
             selectedTime = "";
+        } else {
+            // Always enable time selection regardless of day selection
+            timeSelect.disabled = false;
         }
+        
         // Update visual feedback
         this.style.border = selectedDay ? '1px solid #ccc' : '1px solid #ff6b6b';
         timeSelect.style.border = selectedTime ? '1px solid #ccc' : '1px solid #ff6b6b';
@@ -280,10 +300,45 @@ require([
         selectedTime = e.target.value;
         // Update visual feedback
         this.style.border = selectedTime ? '1px solid #ccc' : '1px solid #ff6b6b';
+        
+        // Log the selection
+        console.log("Selected time period:", selectedTime === "ALL" ? "All Times" : selectedTime);
+        
         updateLayerFilter();
     });
 
-    // Function to update layer based on filters
+    // Add event handler for mode selection
+    document.getElementById("modeSelect").addEventListener("change", function(e) {
+        selectedMode = e.target.value;
+        console.log("Selected mode:", selectedMode);
+        
+        // Reset day and time selections when changing modes
+        const daySelect = document.getElementById("daySelect");
+        const timeSelect = document.getElementById("timeSelect");
+        
+        daySelect.value = "";
+        selectedDay = "";
+        timeSelect.value = "";
+        selectedTime = "";
+        timeSelect.disabled = true;
+        
+        // Update visual feedback
+        daySelect.style.border = '1px solid #ff6b6b';
+        timeSelect.style.border = '1px solid #ff6b6b';
+        
+        // Clear graphics and selections
+        selectedOrigins.clear();
+        tripData = {};
+        clickCount = {};
+        view.graphics.removeAll();
+        
+        // Hide side panel if visible
+        if (document.getElementById("sidePanel")) {
+            document.getElementById("sidePanel").style.display = "none";
+        }
+    });
+
+    // Update the updateLayerFilter function to also update the legend title
     function updateLayerFilter() {
         if (!selectedDay) {
             console.log("No day selected, clearing graphics");
@@ -291,23 +346,27 @@ require([
             return;
         }
 
-        const newUrl = getODTableURL(selectedDay);
-        if (!newUrl) {
-            console.error("Invalid day selected");
-            return;
-        }
-
-        // Create new FeatureLayer instance instead of modifying URL
+        // Create new FeatureLayer instance based on selected mode
         odTable = new FeatureLayer({
-            url: newUrl,
+            url: getODTableURL(),
             id: "OD_Table",
             outFields: ["*"],
             visible: false,
             opacity: 0.7
         });
 
-        let whereClause = "1=1";
-        if (selectedTime) {
+        // Special handling for "All Days" option
+        let whereClause;
+        if (selectedDay === "0: All Days (M-Su)") {
+            // Include all weekdays (1-6) as there's no pre-aggregated data
+            whereClause = "Day_Type IN ('1: Monday (M-M)', '2: Tuesday (Tu-Tu)', '3: Wednesday (W-W)', '4: Thursday (Th-Th)', '5: Friday (F-F)', '6: Saturday (Sa-Sa)')";
+        } else {
+            // For specific days, use the selected day
+            whereClause = `Day_Type = '${selectedDay}'`;
+        }
+        
+        // Apply time filter only if not "ALL"
+        if (selectedTime && selectedTime !== "ALL") {
             whereClause += ` AND Day_Part = '${selectedTime}'`;
         }
 
@@ -318,11 +377,17 @@ require([
             odTable.queryFeatureCount({
                 where: whereClause
             }).then(count => {
-                console.log(`Found ${count} records in table for day ${selectedDay}${selectedTime ? `, time ${selectedTime}` : ''}`);
+                console.log(`Found ${count} records in table for day ${selectedDay}${selectedTime ? `, time ${selectedTime === 'ALL' ? 'All Times' : selectedTime}` : ''}`);
             });
         }).catch(error => {
-            console.error("Error loading new OD table:", error);
+            console.error("Error loading OD table:", error);
         });
+
+        // Update legend title
+        const modeText = selectedMode === "internal" ? "Within Beaver County" : "To External Areas";
+        if (legendExpand && legendExpand.content) {
+            legendExpand.content.layerInfos[0].title = `Number of Trips (${modeText})`;
+        }
 
         // Clear existing selections
         selectedOrigins.clear();
@@ -333,7 +398,7 @@ require([
 
     // Click handler
     view.on("click", function(event) {
-        // Validate both day and time filters
+        // Validate filters
         if (!selectedDay) {
             alert("Please select a Day of Week first");
             return;
@@ -361,9 +426,8 @@ require([
                 return;
             }
 
-            // Click tracking - simplified to just toggle selection
+            // Click tracking - toggle selection
             if (selectedOrigins.has(clickedBGId)) {
-                // If already selected, remove it
                 selectedOrigins.delete(clickedBGId);
                 delete tripData[clickedBGId];
                 updateDisplay();
@@ -372,41 +436,146 @@ require([
 
             // If not selected, add it
             selectedOrigins.add(clickedBGId);
-
-            // Query OD table for trips
-            console.log("Querying OD table with:", {
-                url: odTable.url,
-                selectedDay: selectedDay,
-                query: `Origin_ID_Text = '${clickedBGId}'${selectedTime ? ` AND Day_Part = '${selectedTime}'` : ''}`
+            
+            // Use the appropriate table URL
+            const tableUrl = getODTableURL();
+            
+            // Create a new feature layer for the query
+            const queryTable = new FeatureLayer({
+                url: tableUrl,
+                outFields: ["*"],
+                visible: false
             });
-
-            const query = {
-                where: `Origin_ID_Text = '${clickedBGId}'${selectedTime ? ` AND Day_Part = '${selectedTime}'` : ''}`,
-                outFields: ["Destination_Zone_ID", "Average_Daily_O_D_Traffic__StL_"],
-                returnGeometry: false
-            };
-
-            odTable.queryFeatures(query).then(function(results) {
-                console.log("Query results:", {
-                    originId: clickedBGId,
-                    featuresFound: results.features.length,
-                    url: odTable.url
-                });
-                if (!results.features.length) {
-                    console.log("No destinations found for origin:", clickedBGId);
-                    return;
+            
+            // Execute the appropriate query based on time and day selections
+            if (selectedTime === "ALL") {
+                // For "All Times" we need to query and sum ALL time periods
+                
+                // Special handling for "All Days" option
+                let whereClause;
+                if (selectedDay === "0: All Days (M-Su)") {
+                    // Include all weekdays (1-6) as there's no pre-aggregated data
+                    whereClause = `Origin_ID_Text = '${clickedBGId}' AND Day_Type IN ('1: Monday (M-M)', '2: Tuesday (Tu-Tu)', '3: Wednesday (W-W)', '4: Thursday (Th-Th)', '5: Friday (F-F)', '6: Saturday (Sa-Sa)')`;
+                } else {
+                    // For specific days, use the selected day
+                    whereClause = `Origin_ID_Text = '${clickedBGId}' AND Day_Type = '${selectedDay}'`;
                 }
-
-                tripData[clickedBGId] = {};
-                results.features.forEach(f => {
-                    const destId = f.attributes.Destination_Zone_ID.toString();
-                    tripData[clickedBGId][destId] = f.attributes.Average_Daily_O_D_Traffic__StL_;
+                
+                console.log("Query for ALL times:", whereClause);
+                
+                queryTable.load().then(() => {
+                    return queryTable.queryFeatures({
+                        where: whereClause,
+                        outFields: ["Destination_Zone_ID", "Average_Daily_O_D_Traffic__StL_", "Day_Part", "Day_Type"],
+                        returnGeometry: false
+                    });
+                }).then(function(results) {
+                    console.log("Query results:", {
+                        originId: clickedBGId,
+                        featuresFound: results.features.length
+                    });
+                    
+                    if (!results.features.length) {
+                        console.log("No destinations found for origin:", clickedBGId);
+                        return;
+                    }
+                    
+                    // Aggregate results by destination, summing across time periods AND days if needed
+                    const aggregatedTrips = {};
+                    results.features.forEach(f => {
+                        const destId = f.attributes.Destination_Zone_ID.toString();
+                        const trips = f.attributes.Average_Daily_O_D_Traffic__StL_;
+                        
+                        // If the day is "All Days", we should divide by the number of days
+                        // to get a daily average (only if the original data represents totals)
+                        // Otherwise, just sum as normal
+                        aggregatedTrips[destId] = (aggregatedTrips[destId] || 0) + trips;
+                    });
+                    
+                    // Store aggregated results
+                    tripData[clickedBGId] = {};
+                    Object.entries(aggregatedTrips).forEach(([destId, trips]) => {
+                        tripData[clickedBGId][destId] = trips;
+                    });
+                    
+                    console.log("Results summary (All Times):", {
+                        originId: clickedBGId,
+                        totalDestinations: Object.keys(aggregatedTrips).length,
+                        totalTrips: Object.values(aggregatedTrips).reduce((sum, trips) => sum + trips, 0)
+                    });
+                    
+                    updateDisplay();
+                }).catch(error => {
+                    console.error("Error querying all time periods:", error);
                 });
-
-                updateDisplay();
-            }).catch(error => {
-                console.error("Error querying OD table:", error);
-            });
+            } else {
+                // For specific time periods
+                
+                // Special handling for "All Days" option
+                let whereClause;
+                if (selectedDay === "0: All Days (M-Su)") {
+                    // Include all weekdays (1-6) as there's no pre-aggregated data
+                    whereClause = `Origin_ID_Text = '${clickedBGId}' AND Day_Type IN ('1: Monday (M-M)', '2: Tuesday (Tu-Tu)', '3: Wednesday (W-W)', '4: Thursday (Th-Th)', '5: Friday (F-F)', '6: Saturday (Sa-Sa)') AND Day_Part = '${selectedTime}'`;
+                } else {
+                    // For specific days, use the selected day
+                    whereClause = `Origin_ID_Text = '${clickedBGId}' AND Day_Type = '${selectedDay}' AND Day_Part = '${selectedTime}'`;
+                }
+                
+                console.log("Query for specific time:", whereClause);
+                
+                const query = {
+                    where: whereClause,
+                    outFields: ["Destination_Zone_ID", "Average_Daily_O_D_Traffic__StL_", "Day_Type"],
+                    returnGeometry: false
+                };
+                
+                // Log the query details
+                console.log("Query:", {
+                    url: tableUrl,
+                    where: whereClause,
+                    day: selectedDay,
+                    time: selectedTime
+                });
+                
+                // Execute query
+                queryTable.load().then(() => {
+                    return queryTable.queryFeatures(query);
+                }).then(function(results) {
+                    console.log("Query results:", {
+                        originId: clickedBGId,
+                        featuresFound: results.features.length
+                    });
+                    
+                    if (!results.features.length) {
+                        console.log("No destinations found for origin:", clickedBGId);
+                        return;
+                    }
+                    
+                    // Aggregate results by destination
+                    const aggregatedTrips = {};
+                    results.features.forEach(f => {
+                        const destId = f.attributes.Destination_Zone_ID.toString();
+                        const trips = f.attributes.Average_Daily_O_D_Traffic__StL_;
+                        aggregatedTrips[destId] = (aggregatedTrips[destId] || 0) + trips;
+                    });
+                    
+                    // Store aggregated results
+                    tripData[clickedBGId] = {};
+                    Object.entries(aggregatedTrips).forEach(([destId, trips]) => {
+                        tripData[clickedBGId][destId] = trips;
+                    });
+                    
+                    console.log("Results summary:", {
+                        originId: clickedBGId,
+                        totalDestinations: Object.keys(aggregatedTrips).length,
+                        totalTrips: Object.values(aggregatedTrips).reduce((sum, trips) => sum + trips, 0)
+                    });
+                    
+                    updateDisplay();
+                }).catch(error => {
+                    console.error("Error querying data:", error);
+                });
+            }
         }).catch(error => {
             console.error("Error in hitTest:", error);
         });
@@ -427,21 +596,6 @@ require([
         originQuery.outFields = ["GEOID"];
 
         beaverCountyBG.queryFeatures(originQuery).then(function(originResults) {
-            // Highlight origins
-            originResults.features.forEach(function(f) {
-                view.graphics.add({
-                    geometry: f.geometry,
-                    symbol: {
-                        type: "simple-fill",
-                        color: [255, 0, 0, 0.3],
-                        outline: { 
-                            color: [255, 0, 0], 
-                            width: 2 
-                        }
-                    }
-                });
-            });
-
             // Calculate combined trips for all destinations
             let combinedTrips = {};
             Object.values(tripData).forEach(originData => {
@@ -453,7 +607,7 @@ require([
             // Update side panel content
             updateSidePanel(originResults.features, combinedTrips);
 
-            // Query and highlight destinations
+            // Query and highlight destinations (no borders)
             const destQuery = beaverCountyBG.createQuery();
             const destIds = Object.keys(combinedTrips);
             if (destIds.length === 0) return;
@@ -462,16 +616,34 @@ require([
             destQuery.outFields = ["GEOID"];
 
             beaverCountyBG.queryFeatures(destQuery).then(function(destResults) {
+                // First, add all destinations with color fills but no borders
                 destResults.features.forEach(function(f) {
-                    const tripCount = combinedTrips[f.attributes.GEOID] || 0;
+                    const destId = f.attributes.GEOID;
+                    const tripCount = combinedTrips[destId] || 0;
                     const color = getColorFromRenderer(tripCount);
                     
+                    // Only add fill color, no border
                     view.graphics.add({
                         geometry: f.geometry,
                         symbol: {
                             type: "simple-fill",
                             color: color,
-                            outline: { color: [0, 0, 255], width: 1 }
+                            outline: { color: [0, 0, 0, 0], width: 0 } // Transparent border
+                        }
+                    });
+                });
+                
+                // Then add prominent borders ONLY to selected origins (on top of fills)
+                originResults.features.forEach(function(f) {
+                    view.graphics.add({
+                        geometry: f.geometry,
+                        symbol: {
+                            type: "simple-fill",
+                            color: [0, 0, 0, 0], // Transparent fill
+                            outline: { 
+                                color: [255, 0, 0], // Bright red border
+                                width: 3          // Thick border
+                            }
                         }
                     });
                 });
@@ -482,12 +654,19 @@ require([
     // Function to update side panel content
     function updateSidePanel(originFeatures, combinedTrips) {
         const sidePanel = document.getElementById("sidePanel") || createSidePanel();
+        
+        // Determine which mode is active for the header
+        const modeTitle = selectedMode === "internal" ? 
+            "Internal Trips (Within Beaver County)" : 
+            "External Trips (To Outside Areas)";
+        
         let content = `
             <div style="text-align: right;">
                 <button onclick="this.parentElement.parentElement.style.display='none'" 
                         style="border: none; background: none; cursor: pointer;">✕</button>
             </div>
             <h3>Selected Block Groups</h3>
+            <p><em>${modeTitle}</em></p>
         `;
 
         originFeatures.forEach(feature => {
@@ -551,10 +730,11 @@ require([
             });
 
             if (totalTrips > 0) {
+                const tripType = selectedMode === "internal" ? "Internal" : "External";
                 tooltip.style.left = event.x + 10 + "px";
                 tooltip.style.top = event.y + 10 + "px";
                 tooltip.style.display = "block";
-                tooltip.innerHTML = `Total Trips: ${totalTrips}`;
+                tooltip.innerHTML = `${tripType} Trips: ${totalTrips}`;
             } else {
                 tooltip.style.display = "none";
             }
