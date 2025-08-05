@@ -725,12 +725,24 @@ require([
             if (selectedOrigins.has(hoveredBGId)) {
                 tooltipContent += `<br><em>Selected Origin</em>`;
                 
+                // Show inbound trips to this selected origin (trips ending here)
+                let totalInbound = 0;
+                Object.values(tripData).forEach(originData => {
+                    totalInbound += originData[hoveredBGId] || 0;
+                });
+                
+                if (totalInbound > 0) {
+                    const tripType = selectedMode === "internal" ? "Internal" : "External";
+                    tooltipContent += `<br><strong>Inbound ${tripType} Trips:</strong> ${totalInbound}`;
+                }
+
                 // Show total outbound trips for this origin
                 const totalOutbound = Object.values(tripData[hoveredBGId] || {}).reduce((sum, trips) => sum + trips, 0);
                 if (totalOutbound > 0) {
                     const tripType = selectedMode === "internal" ? "Internal" : "External";
                     tooltipContent += `<br><strong>Total Outbound ${tripType} Trips:</strong> ${totalOutbound}`;
                 }
+                
             } else if (selectedOrigins.size > 0) {
                 // Check if this is a destination with trips
                 let totalInbound = 0;
