@@ -181,7 +181,7 @@ require([
 
     // Layer for block group outlines (green)
     const blockGroupOutlineLayer = new FeatureLayer({
-        url: "https://services3.arcgis.com/MV5wh5WkCMqlwISp/ArcGIS/rest/services/Greene_County_ODs/FeatureServer/1",
+        url: "https://services3.arcgis.com/MV5wh5WkCMqlwISp/ArcGIS/rest/services/BCTA_Trip_Purpose/FeatureServer/0",
         id: "BlockGroupOutline",
         outFields: ["*"],
         visible: true,
@@ -191,7 +191,7 @@ require([
 
     // Layer for trips (class breaks)
     const blockGroupTripsLayer = new FeatureLayer({
-        url: "https://services3.arcgis.com/MV5wh5WkCMqlwISp/ArcGIS/rest/services/Greene_County_ODs/FeatureServer/1",
+        url: "https://services3.arcgis.com/MV5wh5WkCMqlwISp/ArcGIS/rest/services/BCTA_Trip_Purpose/FeatureServer/0",
         id: "BlockGroupTrips",
         outFields: ["*"],
         visible: true,
@@ -205,7 +205,7 @@ require([
 
     // Create feature layers
     const beaverCountyBG = new FeatureLayer({
-        url: "https://services3.arcgis.com/MV5wh5WkCMqlwISp/ArcGIS/rest/services/Greene_County_ODs/FeatureServer/1",
+        url: "https://services3.arcgis.com/MV5wh5WkCMqlwISp/ArcGIS/rest/services/BCTA_Trip_Purpose/FeatureServer/0",
         id: "BeaverCounty_BG",
         outFields: ["*"],
         visible: true,
@@ -223,7 +223,7 @@ require([
     function getODTableURL() {
         if (selectedMode === "internal") {
             // Internal trips (within Greene County)
-            return "https://services3.arcgis.com/MV5wh5WkCMqlwISp/ArcGIS/rest/services/Greene_County_ODs/FeatureServer/2";
+            return "https://services3.arcgis.com/MV5wh5WkCMqlwISp/ArcGIS/rest/services/BCTA_Trip_Purpose/FeatureServer/1";
         } 
     }
 
