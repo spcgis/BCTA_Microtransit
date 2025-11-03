@@ -63,7 +63,9 @@ require([
     <div style="margin-bottom: 10px;">
         <label for="modeSelect">Trip Type:</label>
         <select id="modeSelect" style="border: 1px solid #ccc">
-            <option value="internal">Beaver County Block Groups
+            <option value="internal">Home to Work</option>
+            <option value="internal">Home to Other</option>
+            <option value="internal">Non-Homebased Trip</option>
         </select>
     </div>
     <div style="margin-bottom: 10px;">
