@@ -15,7 +15,7 @@ require([
         container: "viewDiv",
         map: map,
         center: [-80.240071, 40.711644], // Beaver County coordinates
-        zoom: 12
+        zoom: 10
     });
 
     // Initialize state variables
