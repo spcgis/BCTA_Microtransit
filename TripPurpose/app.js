@@ -14,8 +14,8 @@ require([
     const view = new MapView({
         container: "viewDiv",
         map: map,
-        center: [-80.1803, 39.8959], // Greene County coordinates
-        zoom: 10
+        center: [-80.240071, 40.711644], // Beaver County coordinates
+        zoom: 12
     });
 
     // Initialize state variables
