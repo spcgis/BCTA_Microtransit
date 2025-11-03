@@ -14,7 +14,7 @@ require([
     const view = new MapView({
         container: "viewDiv",
         map: map,
-        center: [-80.285108, 40.613534], // Beaver County coordinates
+        center: [-80.294734, 40.646220], // Beaver County coordinates
         zoom: 10
     });
 
