@@ -63,9 +63,9 @@ require([
     <div style="margin-bottom: 10px;">
         <label for="modeSelect">Trip Type:</label>
         <select id="modeSelect" style="border: 1px solid #ccc">
-            <option value="internal">Home to Work</option>
-            <option value="internal">Home to Other</option>
-            <option value="internal">Non-Homebased Trip</option>
+            <option value="HTW">Home to Work</option>
+            <option value="HTO">Home to Other</option>
+            <option value="NHB">Non-Homebased Trip</option>
         </select>
     </div>
     <div style="margin-bottom: 10px;">
@@ -223,10 +223,13 @@ require([
 
     // Modify the getODTableURL function to use different layers based on mode
     function getODTableURL() {
-        if (selectedMode === "internal") {
-            // Internal trips (within Greene County)
+        if (selectedMode === "HTW") {
+            // Home to Work Trips
             return "https://services3.arcgis.com/MV5wh5WkCMqlwISp/ArcGIS/rest/services/BCTA_Trip_Purpose/FeatureServer/1";
-        } 
+        } else {
+            // Home to Other Trips
+            return"https://services3.arcgis.com/MV5wh5WkCMqlwISp/ArcGIS/rest/services/BCTA_Trip_Purpose/FeatureServer/1"
+        }
     }
 
     // Modify the OD table setup
