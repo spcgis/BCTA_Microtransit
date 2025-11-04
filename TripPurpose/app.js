@@ -229,10 +229,7 @@ require([
         } else {
             // Home to Other Trips
             return"https://services3.arcgis.com/MV5wh5WkCMqlwISp/ArcGIS/rest/services/BCTA_Trip_Purpose/FeatureServer/2";
-        } else {
-            // Non Home Based Trips
-            return"https://services3.arcgis.com/MV5wh5WkCMqlwISp/ArcGIS/rest/services/BCTA_Trip_Purpose/FeatureServer/3"
-        }
+        } 
     }
 
     // Modify the OD table setup
