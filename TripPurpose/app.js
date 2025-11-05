@@ -467,7 +467,7 @@ require([
                 queryTable.load().then(() => {
                     return queryTable.queryFeatures({
                         where: whereClause,
-                        outFields: ["Destination_Zone_ID", "Average_Daily_O_D_Traffic__StL_", "Day_Part", "Day_Type"],
+                        outFields: ["Destination_Zone_ID", "Average_Daily_O_D_Traffic__StL_", "Home to Work", "Home to Other", "Non Home Based Trip", "Day_Part", "Day_Type"],
                         returnGeometry: false
                     });
                 }).then(function(results) {
@@ -526,7 +526,7 @@ require([
                 
                 const query = {
                     where: whereClause,
-                    outFields: ["Destination_Zone_ID", "Average_Daily_O_D_Traffic__StL_", "Day_Type"],
+                    outFields: ["Destination_Zone_ID", "Average_Daily_O_D_Traffic__StL_", "Home to Work", "Home to Other", "Non Home Based Trip", "Day_Type"],
                     returnGeometry: false
                 };
                 
