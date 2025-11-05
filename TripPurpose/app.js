@@ -63,8 +63,9 @@ require([
     <div style="margin-bottom: 10px;">
         <label for="modeSelect">Trip Type:</label>
         <select id="modeSelect" style="border: 1px solid #ccc">
-            <option value="internal">Internal Trips (Within Beaver County)</option>
-            <option value="external">External Trips (To Outside Areas)</option>
+            <option value="internal">Home to Work</option>
+            <option value="external">Home to Other</option>
+            <option value="external">Non Home Based Trips</option>
         </select>
     </div>
     <div style="margin-bottom: 10px;">
@@ -383,7 +384,7 @@ require([
         });
 
         // Update legend title
-        const modeText = selectedMode === "internal" ? "Home to Work" : "Home to Other" : "Non Home Based Trips";
+        const modeText = selectedMode === "internal" ? "Within Beaver County" : "To External Areas";
         if (legendExpand && legendExpand.content) {
             legendExpand.content.layerInfos[0].title = `Number of Trips (${modeText})`;
         }
@@ -514,7 +515,7 @@ require([
                 let whereClause;
                 if (selectedDay === "0: All Days (M-Su)") {
                     // Include all weekdays (1-6) as there's no pre-aggregated data
-                    whereClause = `Origin = '${clickedBGId}' AND Day_Type IN ('1: Monday (M-M)', '2: Tuesday (Tu-Tu)', '3: Wednesday (W-W)', '4: Thursday (Th-Th)', '5: Friday (F-F)', '6: Saturday (Sa-Sa)') AND Day_Part = '${selectedTime}'`;
+                    whereClause = `Origin = '${clickedBGId}' AND Day_Type IN ('1: Monday (M-M)', '2: Tuesday (Tu-Tu)', '3: Wednesday (W-W)', '4: Thursday (Th-Th)', '5: Friday (F-F)', '6: Saturday (Sa-Sa)', '7: Sunday (Su-Su)') AND Day_Part = '${selectedTime}'`;
                 } else {
                     // For specific days, use the selected day
                     whereClause = `Origin = '${clickedBGId}' AND Day_Type = '${selectedDay}' AND Day_Part = '${selectedTime}'`;
