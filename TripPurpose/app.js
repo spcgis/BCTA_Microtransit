@@ -225,9 +225,6 @@ require([
         if (selectedMode === "internal") {
             // Internal trips (within Beaver County)
             return "https://services3.arcgis.com/MV5wh5WkCMqlwISp/ArcGIS/rest/services/BCTA_Trip_Purpose/FeatureServer/1";
-        } else {
-            // External trips (Beaver County to outside areas)
-            return "https://services3.arcgis.com/MV5wh5WkCMqlwISp/ArcGIS/rest/services/BCTA_Trip_Purpose/FeatureServer/2";
         }
     }
 
@@ -466,7 +463,7 @@ require([
                 queryTable.load().then(() => {
                     return queryTable.queryFeatures({
                         where: whereClause,
-                        outFields: ["Destination_Zone_ID", "Average_Daily_O_D_Traffic__StL_Volume_", "Day_Part", "Day_Type"],
+                        outFields: ["Destination_Zone_ID", "Average_Daily_O_D_Traffic__StL_Volume_", "Home_to_Work", "Home_to_Other", "Non_Home_Based_Trip", "Day_Part", "Day_Type"],
                         returnGeometry: false
                     });
                 }).then(function(results) {
@@ -525,7 +522,7 @@ require([
                 
                 const query = {
                     where: whereClause,
-                    outFields: ["Destination_Zone_ID", "Average_Daily_O_D_Traffic__StL_Volume_", "Day_Type"],
+                    outFields: ["Destination_Zone_ID", "Average_Daily_O_D_Traffic__StL_Volume_", "Home_to_Work", "Home_to_Other", "Non_Home_Based_Trip", "Day_Type"],
                     returnGeometry: false
                 };
                 
