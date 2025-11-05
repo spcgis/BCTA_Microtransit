@@ -110,7 +110,7 @@ require([
     // Define the class breaks renderer
     const tripsRenderer = {
         type: "class-breaks",
-        field: "Average_Daily_O_D_Traffic__StL_",
+        field: "Average_Daily_O_D_Traffic__StL_Volume_",
         defaultSymbol: {
             type: "simple-fill",
             color: [180, 230, 180, 0.6], // transparent for no trips
@@ -466,7 +466,7 @@ require([
                 queryTable.load().then(() => {
                     return queryTable.queryFeatures({
                         where: whereClause,
-                        outFields: ["Destination_Zone_ID", "Average_Daily_O_D_Traffic__StL_", "Day_Part", "Day_Type"],
+                        outFields: ["Destination_Zone_ID", "Average_Daily_O_D_Traffic__StL_Volume_", "Day_Part", "Day_Type"],
                         returnGeometry: false
                     });
                 }).then(function(results) {
@@ -484,7 +484,7 @@ require([
                     const aggregatedTrips = {};
                     results.features.forEach(f => {
                         const destId = f.attributes.Destination_Zone_ID.toString();
-                        const trips = f.attributes.Average_Daily_O_D_Traffic__StL_;
+                        const trips = f.attributes.Average_Daily_O_D_Traffic__StL_Volume_;
                         
                         // If the day is "All Days", we should divide by the number of days
                         // to get a daily average (only if the original data represents totals)
@@ -525,7 +525,7 @@ require([
                 
                 const query = {
                     where: whereClause,
-                    outFields: ["Destination_Zone_ID", "Average_Daily_O_D_Traffic__StL_", "Day_Type"],
+                    outFields: ["Destination_Zone_ID", "Average_Daily_O_D_Traffic__StL_Volume_", "Day_Type"],
                     returnGeometry: false
                 };
                 
@@ -555,7 +555,7 @@ require([
                     const aggregatedTrips = {};
                     results.features.forEach(f => {
                         const destId = f.attributes.Destination_Zone_ID.toString();
-                        const trips = f.attributes.Average_Daily_O_D_Traffic__StL_;
+                        const trips = f.attributes.Average_Daily_O_D_Traffic__StL_Volume_;
                         aggregatedTrips[destId] = (aggregatedTrips[destId] || 0) + trips;
                     });
                     
