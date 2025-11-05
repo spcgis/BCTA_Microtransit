@@ -78,6 +78,7 @@ require([
             <option value="4: Thursday (Th-Th)">Thursday</option>
             <option value="5: Friday (F-F)">Friday</option>
             <option value="6: Saturday (Sa-Sa)">Saturday</option>
+            <option value="7: Sunday (Su-Su)">Sunday</option>
         </select>
     </div>
     <div>
@@ -100,8 +101,6 @@ require([
             <option value="13: 6pm (6pm-7pm)">6pm-7pm</option>
             <option value="14: 7pm (7pm-8pm)">7pm-8pm</option>
             <option value="15: 8pm (8pm-9pm)">8pm-9pm</option>
-            <option value="16: 9pm (9pm-10pm)">9pm-10pm</option>
-            <option value="17: 10pm (10pm-11pm)">10pm-11pm</option>
         </select>
     </div>
     `;
@@ -359,7 +358,7 @@ require([
         let whereClause;
         if (selectedDay === "0: All Days (M-Su)") {
             // Include all weekdays (1-6) as there's no pre-aggregated data
-            whereClause = "Day_Type IN ('1: Monday (M-M)', '2: Tuesday (Tu-Tu)', '3: Wednesday (W-W)', '4: Thursday (Th-Th)', '5: Friday (F-F)', '6: Saturday (Sa-Sa)')";
+            whereClause = "Day_Type IN ('1: Monday (M-M)', '2: Tuesday (Tu-Tu)', '3: Wednesday (W-W)', '4: Thursday (Th-Th)', '5: Friday (F-F)', '6: Saturday (Sa-Sa)', '7: Sunday (Su-Su)')";
         } else {
             // For specific days, use the selected day
             whereClause = `Day_Type = '${selectedDay}'`;
@@ -384,7 +383,7 @@ require([
         });
 
         // Update legend title
-        const modeText = selectedMode === "internal" ? "Within Beaver County" : "To External Areas";
+        const modeText = selectedMode === "internal" ? "Home to Work" : "Home to Other" : "Non Home Based Trips";
         if (legendExpand && legendExpand.content) {
             legendExpand.content.layerInfos[0].title = `Number of Trips (${modeText})`;
         }
@@ -455,7 +454,7 @@ require([
                 let whereClause;
                 if (selectedDay === "0: All Days (M-Su)") {
                     // Include all weekdays (1-6) as there's no pre-aggregated data
-                    whereClause = `Origin = '${clickedBGId}' AND Day_Type IN ('1: Monday (M-M)', '2: Tuesday (Tu-Tu)', '3: Wednesday (W-W)', '4: Thursday (Th-Th)', '5: Friday (F-F)', '6: Saturday (Sa-Sa)')`;
+                    whereClause = `Origin = '${clickedBGId}' AND Day_Type IN ('1: Monday (M-M)', '2: Tuesday (Tu-Tu)', '3: Wednesday (W-W)', '4: Thursday (Th-Th)', '5: Friday (F-F)', '6: Saturday (Sa-Sa)', '7: Sunday (Su-Su)')`;
                 } else {
                     // For specific days, use the selected day
                     whereClause = `Origin = '${clickedBGId}' AND Day_Type = '${selectedDay}'`;
