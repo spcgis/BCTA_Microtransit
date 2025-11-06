@@ -111,8 +111,7 @@ require([
     const tripsRenderer = {
         type: "class-breaks",
         field: "Home_to_Work",
-        field: "Home_to_Other",
-        field: "Non_Home_Based_Trip",
+
         defaultSymbol: {
             type: "simple-fill",
             color: [180, 230, 180, 0.6], // transparent for no trips
