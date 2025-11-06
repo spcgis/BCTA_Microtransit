@@ -110,7 +110,9 @@ require([
     // Define the class breaks renderer
     const tripsRenderer = {
         type: "class-breaks",
-        field: "Average_Daily_O_D_Traffic__StL_Volume_",
+        field: "Home_to_Work",
+        field: "Home_to_Other",
+        field: "Non_Home_Based_Trip",
         defaultSymbol: {
             type: "simple-fill",
             color: [180, 230, 180, 0.6], // transparent for no trips
