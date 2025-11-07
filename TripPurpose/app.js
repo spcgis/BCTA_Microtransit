@@ -64,8 +64,8 @@ require([
         <label for="modeSelect">Trip Type:</label>
         <select id="modeSelect" style="border: 1px solid #ccc">
             <option value="internal">Home to Work</option>
-            <option value="external">Home to Other</option>
-            <option value="external">Non Home Based Trips</option>
+            <option value="HtO">Home to Other</option>
+            <option value="NHBT">Non Home Based Trips</option>
         </select>
     </div>
     <div style="margin-bottom: 10px;">
@@ -110,8 +110,7 @@ require([
     // Define the class breaks renderer
     const tripsRenderer = {
         type: "class-breaks",
-        field: "Home_to_Work",
-
+        field: "Average_Daily_O_D_Traffic__StL_Volume_",
         defaultSymbol: {
             type: "simple-fill",
             color: [180, 230, 180, 0.6], // transparent for no trips
@@ -224,11 +223,17 @@ require([
     // Modify the getODTableURL function to use different layers based on mode
     function getODTableURL() {
         if (selectedMode === "internal") {
-            // Internal trips (within Beaver County)
+            // Home to Work Trips
+            return "https://services3.arcgis.com/MV5wh5WkCMqlwISp/ArcGIS/rest/services/BCTA_Trip_Purpose/FeatureServer/1";
+        } else if (selectedMode === "HtO") {
+            // Home to Other Trips
+            return "https://services3.arcgis.com/MV5wh5WkCMqlwISp/ArcGIS/rest/services/BCTA_Trip_Purpose/FeatureServer/1";
+            // Non Home Based Trips
+        } else if (selectedMode === "NHBT") {
             return "https://services3.arcgis.com/MV5wh5WkCMqlwISp/ArcGIS/rest/services/BCTA_Trip_Purpose/FeatureServer/1";
         }
     }
-
+    
     // Modify the OD table setup
     let odTable = new FeatureLayer({
         url: getODTableURL(),
@@ -464,7 +469,7 @@ require([
                 queryTable.load().then(() => {
                     return queryTable.queryFeatures({
                         where: whereClause,
-                        outFields: ["Destination_Zone_ID", "Average_Daily_O_D_Traffic__StL_Volume_", "Home_to_Work", "Home_to_Other", "Non_Home_Based_Trip", "Day_Part", "Day_Type"],
+                        outFields: ["Destination_Zone_ID", "Home_to_Work", "Home_to_Other", "Non_Home_Based_Trip", "Day_Part", "Day_Type"],
                         returnGeometry: false
                     });
                 }).then(function(results) {
@@ -523,7 +528,7 @@ require([
                 
                 const query = {
                     where: whereClause,
-                    outFields: ["Destination_Zone_ID", "Average_Daily_O_D_Traffic__StL_Volume_", "Home_to_Work", "Home_to_Other", "Non_Home_Based_Trip", "Day_Type"],
+                    outFields: ["Destination_Zone_ID", "Home_to_Work", "Home_to_Other", "Non_Home_Based_Trip", "Day_Type"],
                     returnGeometry: false
                 };
                 
