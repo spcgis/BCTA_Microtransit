@@ -528,7 +528,7 @@ require([
                 
                 const query = {
                     where: whereClause,
-                    outFields: ["Destination_Zone_ID", "Home_to_Work", "Home_to_Other", "Non_Home_Based_Trip", "Day_Type"],
+                    outFields: ["Destination_Zone_ID", "Non_Home_Based_Trip", "Day_Type"],
                     returnGeometry: false
                 };
                 
