@@ -558,7 +558,16 @@ require([
                     const aggregatedTrips = {};
                     results.features.forEach(f => {
                         const destId = f.attributes.Destination_Zone_ID.toString();
-                        const trips = f.attributes.Average_Daily_O_D_Traffic__StL_Volume_;
+                        if (selectedMode === "internal") {
+                            const trips = f.attributes.Home_to_Work
+                        } else if (selectedMode === "HtO" ) {
+                            const trips = f.attributes.Home_to_Other
+                        } else if (selectedMode === "NHBT" ) {
+                            const trips = f.attributes.Non_Home_Based_Trip
+                        } else {
+                            const trips = f.attributes.Average_Daily_O_D_Traffic__StL_Volume_
+                        };
+                        
                         aggregatedTrips[destId] = (aggregatedTrips[destId] || 0) + trips;
                     });
                     
