@@ -585,7 +585,7 @@ require([
                     
                     updateDisplay();
                 }).catch(error => {
-                    console.error("Error querying data:", error);
+                    console.error("Error querying data:", error.details);
                 });
             }
         }).catch(error => {
