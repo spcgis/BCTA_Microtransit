@@ -559,12 +559,12 @@ require([
                     results.features.forEach(f => {
                         const destId = f.attributes.Destination_Zone_ID.toString();
                         if (selectedMode === "internal") {
-                            const trips = f.attributes.Home_to_Work
+                            const trips = f.attributes.Home_to_Work;
                         } else if (selectedMode === "HtO" ) {
-                            const trips = f.attributes.Home_to_Other
+                            const trips = f.attributes.Home_to_Other;
                         } else if (selectedMode === "NHBT" ) {
-                            const trips = f.attributes.Non_Home_Based_Trip
-                        };
+                            const trips = f.attributes.Non_Home_Based_Trip;
+                        }
                         
                         aggregatedTrips[destId] = (aggregatedTrips[destId] || 0) + trips;
                     });
