@@ -21,7 +21,6 @@ require([
     // Initialize state variables
     let selectedOrigins = new Set();
     let tripData = {};
-    let clickCount = {};
     let selectedDay = "";
     let selectedTime = "";
     let selectedMode = "internal";
