@@ -23,7 +23,7 @@ require([
     let tripData = {};
     let selectedDay = "";
     let selectedTime = "";
-    let selectedMode = "internal";
+    let selectedPurpose = "Home_to_Work";
 
     // Create tooltip
     const tooltip = document.createElement("div");
@@ -60,11 +60,11 @@ require([
     // Update filterDiv innerHTML to include the mode selection dropdown
     filterDiv.innerHTML = `
     <div style="margin-bottom: 10px;">
-        <label for="modeSelect">Trip Type:</label>
-        <select id="modeSelect" style="border: 1px solid #ccc">
-            <option value="internal">Home to Work</option>
-            <option value="HtO">Home to Other</option>
-            <option value="NHBT">Non Home Based Trips</option>
+        <label for="purposeSelect">Trip Purpose:</label>
+        <select id="purposeSelect" style="border: 1px solid #ccc">
+            <option value="Home_to_Work">Home to Work</option>
+            <option value="Home_to_Other">Home to Other</option>
+            <option value="Non_Home_Based_Trip">Non Home Based</option>
         </select>
     </div>
     <div style="margin-bottom: 10px;">
@@ -107,9 +107,10 @@ require([
     view.ui.add(filterDiv, "top-right");
 
     // Define the class breaks renderer
-    const tripsRenderer = {
+    function tripsRenderer (trip_field) {
+    return {
         type: "class-breaks",
-        field: "Average_Daily_O_D_Traffic__StL_Volume_",
+        field: trip_field,
         defaultSymbol: {
             type: "simple-fill",
             color: [180, 230, 180, 0.6], // transparent for no trips
@@ -167,7 +168,7 @@ require([
                 label: ">50 trips"
             }
         ]
-    };
+    }};
 
     // Default green renderer for block groups
     const greenRenderer = {
@@ -196,7 +197,7 @@ require([
         outFields: ["*"],
         visible: true,
         opacity: 0.7,
-        renderer: tripsRenderer
+        renderer: tripsRenderer(selectedPurpose)
     });
 
     // Add both layers to the map (order matters: outlines first, trips second)
@@ -210,7 +211,7 @@ require([
         outFields: ["*"],
         visible: true,
         opacity: 0.7,
-        renderer: tripsRenderer  // Apply the renderer here
+        renderer: tripsRenderer(selectedPurpose)  // Apply the renderer here
     });
 
     beaverCountyBG.when(() => {
@@ -221,14 +222,14 @@ require([
 
     // Modify the getODTableURL function to use different layers based on mode
     function getODTableURL() {
-        if (selectedMode === "internal") {
+        if (selectedPurpose === "Home_to_Work") {
             // Home to Work Trips
             return "https://services3.arcgis.com/MV5wh5WkCMqlwISp/ArcGIS/rest/services/BCTA_Trip_Purpose/FeatureServer/1";
-        } else if (selectedMode === "HtO") {
+        } else if (selectedPurpose === "Home_to_Other") {
             // Home to Other Trips
             return "https://services3.arcgis.com/MV5wh5WkCMqlwISp/ArcGIS/rest/services/BCTA_Trip_Purpose/FeatureServer/2";
             // Non Home Based Trips
-        } else if (selectedMode === "NHBT") {
+        } else if (selectedPurpose === "Non_Home_Based_Trip") {
             return "https://services3.arcgis.com/MV5wh5WkCMqlwISp/ArcGIS/rest/services/BCTA_Trip_Purpose/FeatureServer/3";
         }
     }
@@ -310,9 +311,9 @@ require([
     });
 
     // Add event handler for mode selection
-    document.getElementById("modeSelect").addEventListener("change", function(e) {
-        selectedMode = e.target.value;
-        console.log("Selected mode:", selectedMode);
+    document.getElementById("purposeSelect").addEventListener("change", function(e) {
+        selectedPurpose = e.target.value;
+        console.log("Selected purpose:", selectedPurpose);
         
         // Reset day and time selections when changing modes
         const daySelect = document.getElementById("daySelect");
@@ -386,9 +387,9 @@ require([
         });
 
         // Update legend title
-        const modeText = selectedMode === "internal" ? "Within Beaver County" : "To External Areas";
+        const modeText = selectedPurpose.replace("_", "").replace("Trip","");
         if (legendExpand && legendExpand.content) {
-            legendExpand.content.layerInfos[0].title = `Number of Trips (${modeText})`;
+            legendExpand.content.layerInfos[0].title = `Number of ${modeText} Trips`;
         }
 
         // Clear existing selections
@@ -468,7 +469,7 @@ require([
                 queryTable.load().then(() => {
                     return queryTable.queryFeatures({
                         where: whereClause,
-                        outFields: ["Destination_Zone_ID", "Non_Home_Based_Trip", "Day_Part", "Day_Type"],
+                        outFields: ["*"],
                         returnGeometry: false
                     });
                 }).then(function(results) {
@@ -486,7 +487,7 @@ require([
                     const aggregatedTrips = {};
                     results.features.forEach(f => {
                         const destId = f.attributes.Destination_Zone_ID.toString();
-                        const trips = f.attributes.Average_Daily_O_D_Traffic__StL_Volume_;
+                        const trips = f.attributes[selectedPurpose];
                         
                         // If the day is "All Days", we should divide by the number of days
                         // to get a daily average (only if the original data represents totals)
@@ -527,7 +528,7 @@ require([
                 
                 const query = {
                     where: whereClause,
-                    outFields: ["Destination_Zone_ID", "Non_Home_Based_Trip", "Day_Type"],
+                    outFields: ["*"],
                     returnGeometry: false
                 };
                 
@@ -557,13 +558,7 @@ require([
                     const aggregatedTrips = {};
                     results.features.forEach(f => {
                         const destId = f.attributes.Destination_Zone_ID.toString();
-                        if (selectedMode === "internal") {
-                            const trips = f.attributes.Home_to_Work;
-                        } else if (selectedMode === "HtO" ) {
-                            const trips = f.attributes.Home_to_Other;
-                        } else if (selectedMode === "NHBT" ) {
-                            const trips = f.attributes.Non_Home_Based_Trip;
-                        }
+                        const trips = f.attributes[selectedPurpose];
                         
                         aggregatedTrips[destId] = (aggregatedTrips[destId] || 0) + trips;
                     });
@@ -664,10 +659,8 @@ require([
     function updateSidePanel(originFeatures, combinedTrips) {
         const sidePanel = document.getElementById("sidePanel") || createSidePanel();
         
-        // Determine which mode is active for the header
-        const modeTitle = selectedMode === "internal" ? 
-            "Internal Trips (Within Beaver County)" : 
-            "External Trips (To Outside Areas)";
+        // Change header
+        const modeTitle = selectedPurpose.replace("_"," ").replace("Trip", "");
         
         let content = `
             <div style="text-align: right;">
@@ -675,7 +668,7 @@ require([
                         style="border: none; background: none; cursor: pointer;">✕</button>
             </div>
             <h3>Selected Block Groups</h3>
-            <p><em>${modeTitle}</em></p>
+            <p><em>${modeTitle} Trips</em></p>
         `;
 
         originFeatures.forEach(feature => {
@@ -729,6 +722,8 @@ require([
 
             const hoveredBGId = result.graphic.attributes.GEOID;
             let tooltipContent = `<strong>Block Group:</strong> ${hoveredBGId}`;
+
+            const tripType = selectedPurpose.replace("_"," ").replace("Trip", "");
             
             // Check if this is a selected origin
             if (selectedOrigins.has(hoveredBGId)) {
@@ -748,7 +743,6 @@ require([
                 // Show total outbound trips for this origin
                 const totalOutbound = Object.values(tripData[hoveredBGId] || {}).reduce((sum, trips) => sum + trips, 0);
                 if (totalOutbound > 0) {
-                    const tripType = selectedMode === "internal" ? "Internal" : "External";
                     tooltipContent += `<br><strong>Total Outbound ${tripType} Trips:</strong> ${totalOutbound}`;
                 }
                 
@@ -761,7 +755,6 @@ require([
                 });
 
                 if (totalInbound > 0) {
-                    const tripType = selectedMode === "internal" ? "Internal" : "External";
                     tooltipContent += `<br><strong>Inbound ${tripType} Trips:</strong> ${totalInbound}`;
                 } else {
                     tooltipContent += `<br><em>No trips to this area</em>`;
@@ -787,9 +780,10 @@ require([
     createSidePanel();
 
     function getColorFromRenderer(tripCount) {
-        const breakInfo = tripsRenderer.classBreakInfos.find(info => 
+        const currentRender = tripsRenderer(selectedPurpose)
+        const breakInfo = currentRender.classBreakInfos.find(info => 
             tripCount >= info.minValue && tripCount <= info.maxValue
         );
-        return breakInfo ? breakInfo.symbol.color : tripsRenderer.defaultSymbol.color;
+        return breakInfo ? breakInfo.symbol.color : currentRender.defaultSymbol.color;
     }
 });
