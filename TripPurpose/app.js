@@ -387,9 +387,7 @@ require([
         });
 
         // Update legend title
-        const modeText = selectedPurpose
-            .replace("/_/g", "")
-            .replace("Trip","");
+        const modeText = selectedPurpose.replaceAll("_", "").replace("Trip","");
         if (legendExpand && legendExpand.content) {
             legendExpand.content.layerInfos[0].title = `Number of ${modeText} Trips`;
         }
@@ -662,9 +660,7 @@ require([
         const sidePanel = document.getElementById("sidePanel") || createSidePanel();
         
         // Change header
-        const modeTitle = selectedPurpose
-            .replace("/_/g", "")
-            .replace("Trip","");
+        const modeTitle = selectedPurpose.replaceAll("_", "").replace("Trip","");
         
         let content = `
             <div style="text-align: right;">
@@ -727,9 +723,7 @@ require([
             const hoveredBGId = result.graphic.attributes.GEOID;
             let tooltipContent = `<strong>Block Group:</strong> ${hoveredBGId}`;
 
-            const tripType = selectedPurpose
-            .replace("/_/g", "")
-            .replace("Trip","");
+            const tripType = selectedPurpose.replaceAll("_", "").replace("Trip","");
             
             // Check if this is a selected origin
             if (selectedOrigins.has(hoveredBGId)) {
