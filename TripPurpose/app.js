@@ -225,7 +225,7 @@ require([
 
     // Add both layers to the map (order matters: outlines first, trips second)
     map.add(blockGroupOutlineLayer);
-    // map.add(blockGroupTripsLayer);
+    map.add(blockGroupTripsLayer);
 
     // Create feature layers
     const beaverCountyBG = new FeatureLayer({
