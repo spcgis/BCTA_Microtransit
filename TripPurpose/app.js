@@ -194,38 +194,38 @@ require([
         renderer: greenRenderer
     });
 
-    // Layer for trips (class breaks)
-    const blockGroupTripsLayer = new FeatureLayer({
-        url: "https://services3.arcgis.com/MV5wh5WkCMqlwISp/ArcGIS/rest/services/BCTA_Trip_Purpose/FeatureServer/0",
-        id: "BlockGroupTrips",
-        outFields: ["*"],
-        visible: true,
-        opacity: 0.7,
-        renderer: tripsRenderer("TotalTripsPerBG")
-    });
+    // // Layer for trips (class breaks)
+    // const blockGroupTripsLayer = new FeatureLayer({
+    //     url: "https://services3.arcgis.com/MV5wh5WkCMqlwISp/ArcGIS/rest/services/BCTA_Trip_Purpose/FeatureServer/0",
+    //     id: "BlockGroupTrips",
+    //     outFields: ["*"],
+    //     visible: true,
+    //     opacity: 0.7,
+    //     renderer: tripsRenderer("TotalTripsPerBG")
+    // });
 
-    blockGroupTripsLayer.features.forEach(function (f) {
-        const trips = parseInt(f.attributes["TotalTripsPerBG"]);
-        const currentRender = tripsRenderer("TotalTripsPerBG");
-        const breakInfo = currentRender.classBreakInfos.find(info => 
-            trips >= info.minValue && tripCount <= info.maxValue
-        );
-        const color = breakInfo ? breakInfo.symbol.color : currentRender.defaultSymbol.color;
+    // blockGroupTripsLayer.features.forEach(function (f) {
+    //     const trips = parseInt(f.attributes["TotalTripsPerBG"]);
+    //     const currentRender = tripsRenderer("TotalTripsPerBG");
+    //     const breakInfo = currentRender.classBreakInfos.find(info => 
+    //         trips >= info.minValue && tripCount <= info.maxValue
+    //     );
+    //     const color = breakInfo ? breakInfo.symbol.color : currentRender.defaultSymbol.color;
 
-        view.graphics.add({
-                    geometry: f.geometry,
-                    symbol: {
-                        type: "simple-fill",
-                        color: color,
-                        outline: { color: [0, 0, 0, 0], width: 0 } // Transparent border
-                    }
-                });
-    }
-    );
+    //     view.graphics.add({
+    //                 geometry: f.geometry,
+    //                 symbol: {
+    //                     type: "simple-fill",
+    //                     color: color,
+    //                     outline: { color: [0, 0, 0, 0], width: 0 } // Transparent border
+    //                 }
+    //             });
+    // }
+    // );
 
     // Add both layers to the map (order matters: outlines first, trips second)
     map.add(blockGroupOutlineLayer);
-    map.add(blockGroupTripsLayer);
+    // map.add(blockGroupTripsLayer);
 
     // Create feature layers
     const beaverCountyBG = new FeatureLayer({
@@ -280,10 +280,10 @@ require([
         view: view,
         style: "classic",
         layerInfos: [
-            {
-                layer: blockGroupTripsLayer,
-                title: "Number of Trips"
-            },
+            // {
+            //     layer: blockGroupTripsLayer,
+            //     title: "Number of Trips"
+            // },
             {
                 layer: blockGroupOutlineLayer,
                 title: "Block Groups"
