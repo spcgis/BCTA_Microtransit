@@ -280,10 +280,10 @@ require([
         view: view,
         style: "classic",
         layerInfos: [
-            // {
-            //     layer: blockGroupTripsLayer,
-            //     title: "Number of Trips"
-            // },
+            {
+                layer: beaverCountyBG,
+                title: "Number of Trips"
+            },
             {
                 layer: blockGroupOutlineLayer,
                 title: "Block Groups"
