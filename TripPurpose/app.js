@@ -190,7 +190,7 @@ require([
 
     // Layer for trips (class breaks)
     const blockGroupTripsLayer = new FeatureLayer({
-        url: "https://services3.arcgis.com/MV5wh5WkCMqlwISp/ArcGIS/rest/services/BCTA_Trip_Purpose/FeatureServer/0",
+        url: getODTableURL(),
         id: "BlockGroupTrips",
         outFields: ["*"],
         visible: true,
@@ -204,7 +204,7 @@ require([
 
     // Create feature layers
     const beaverCountyBG = new FeatureLayer({
-        url: "https://services3.arcgis.com/MV5wh5WkCMqlwISp/ArcGIS/rest/services/BCTA_Trip_Purpose/FeatureServer/0",
+        url: getODTableURL(),
         id: "BeaverCounty_BG",
         outFields: ["*"],
         visible: true,
