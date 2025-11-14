@@ -111,10 +111,8 @@ require([
     view.ui.add(filterDiv, "top-right");
 
     // Define the class breaks renderer
-    function tripsRenderer (trip_field) {
-    return {
+    const tripsRenderer = {
         type: "class-breaks",
-        field: trip_field,
         defaultSymbol: {
             type: "simple-fill",
             color: [180, 230, 180, 0.6], // transparent for no trips
@@ -172,7 +170,7 @@ require([
                 label: ">50 trips"
             }
         ]
-    }};
+    };
 
     // Default green renderer for block groups
     const greenRenderer = {
@@ -204,7 +202,7 @@ require([
         outFields: ["*"],
         visible: true,
         opacity: 0.7,
-        renderer: tripsRenderer("TotalTripsPerBG")  // Apply the renderer here
+        renderer: tripsRenderer  // Apply the renderer here
     });
 
     beaverCountyBG.when(() => {
@@ -772,10 +770,9 @@ require([
     createSidePanel();
 
     function getColorFromRenderer(tripCount) {
-        const currentRender = tripsRenderer(selectedPurpose)
-        const breakInfo = currentRender.classBreakInfos.find(info => 
+        const breakInfo = tripsRenderer.classBreakInfos.find(info => 
             tripCount >= info.minValue && tripCount <= info.maxValue
         );
-        return breakInfo ? breakInfo.symbol.color : currentRender.defaultSymbol.color;
+        return breakInfo ? breakInfo.symbol.color : tripsRenderer.defaultSymbol.color;
     }
 });
