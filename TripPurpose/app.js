@@ -201,7 +201,7 @@ require([
         outFields: ["*"],
         visible: true,
         opacity: 0.7,
-        renderer: tripsRenderer(selectedPurpose)
+        renderer: tripsRenderer("TotalTripsPerBG")
     });
 
     // Add both layers to the map (order matters: outlines first, trips second)
@@ -215,7 +215,7 @@ require([
         outFields: ["*"],
         visible: true,
         opacity: 0.7,
-        renderer: tripsRenderer(selectedPurpose)  // Apply the renderer here
+        renderer: tripsRenderer("TotalTripsPerBG")  // Apply the renderer here
     });
 
     beaverCountyBG.when(() => {
