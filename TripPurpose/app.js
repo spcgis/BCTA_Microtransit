@@ -206,6 +206,7 @@ require([
 
     blockGroupTripsLayer.features.forEach(function (f) {
         const trips = parseInt(f.attributes["TotalTripsPerBG"]);
+        const currentRender = tripsRenderer("TotalTripsPerBG");
         const breakInfo = currentRender.classBreakInfos.find(info => 
             trips >= info.minValue && tripCount <= info.maxValue
         );
