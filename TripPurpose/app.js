@@ -195,18 +195,18 @@ require([
     });
 
     // // Layer for trips (class breaks)
-    const blockGroupTripsLayer = new FeatureLayer({
-        url: "https://services3.arcgis.com/MV5wh5WkCMqlwISp/ArcGIS/rest/services/BCTA_Trip_Purpose/FeatureServer/0",
-        id: "BlockGroupTrips",
-        outFields: ["*"],
-        visible: true,
-        opacity: 0.7,
-        renderer: tripsRenderer("TotalTripsPerBG")
-    });
+    // const blockGroupTripsLayer = new FeatureLayer({
+    //     url: "https://services3.arcgis.com/MV5wh5WkCMqlwISp/ArcGIS/rest/services/BCTA_Trip_Purpose/FeatureServer/0",
+    //     id: "BlockGroupTrips",
+    //     outFields: ["*"],
+    //     visible: true,
+    //     opacity: 0.7,
+    //     renderer: tripsRenderer("TotalTripsPerBG")
+    // });
 
     // Add both layers to the map (order matters: outlines first, trips second)
     map.add(blockGroupOutlineLayer);
-    map.add(blockGroupTripsLayer);
+    // map.add(blockGroupTripsLayer);
 
     // Create feature layers
     const beaverCountyBG = new FeatureLayer({
