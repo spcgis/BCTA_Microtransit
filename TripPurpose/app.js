@@ -201,29 +201,8 @@ require([
         outFields: ["*"],
         visible: true,
         opacity: 0.7,
-        renderer: tripsRenderer("Total Trips per Block Group")
+        renderer: tripsRenderer("TotalTripsPerBG")
     });
-
-    const tripQuery = blockGroupTripsLayer.createQuery();
-
-    blockGroupTripsLayer.queryFeatures(tripQuery).then(function(results) {
-    const currentRender = tripsRenderer("Total Trips per Block Group");
-        results.features.forEach(function (f) {
-        const trips = parseInt(f.attributes["TotalTripsPerBG"]);    
-        const breakInfo = currentRender.classBreakInfos.find(info => 
-            trips >= info.minValue && tripCount <= info.maxValue
-        );
-        const color = breakInfo ? breakInfo.symbol.color : currentRender.defaultSymbol.color;
-        view.graphics.add({
-                    geometry: f.geometry,
-                    symbol: {
-                        type: "simple-fill",
-                        color: color,
-                        outline: { color: [0, 0, 0, 0], width: 0 } // Transparent border
-                    }
-                });
-    });
-});
 
     // Add both layers to the map (order matters: outlines first, trips second)
     map.add(blockGroupOutlineLayer);
@@ -236,7 +215,7 @@ require([
         outFields: ["*"],
         visible: true,
         opacity: 0.7,
-        renderer: tripsRenderer(selectedPurpose)  // Apply the renderer here
+        renderer: tripsRenderer("TotalTripsPerBG")  // Apply the renderer here
     });
 
     beaverCountyBG.when(() => {
@@ -283,7 +262,7 @@ require([
         style: "classic",
         layerInfos: [
             {
-                layer: blockGroupTripsLayer,
+                layer: beaverCountyBG,
                 title: "Number of Trips"
             },
             {
