@@ -489,7 +489,7 @@ require([
                     const aggregatedTrips = {};
                     results.features.forEach(f => {
                         const destId = f.attributes.Destination_Zone_ID.toString();
-                        const trips = f.attributes[selectedPurpose];
+                        const trips = parseInt(f.attributes[selectedPurpose]);
                         
                         // If the day is "All Days", we should divide by the number of days
                         // to get a daily average (only if the original data represents totals)
@@ -678,8 +678,6 @@ require([
         originFeatures.forEach(feature => {
             const bgId = feature.attributes.GEOID;
             const totalTrips = Object.values(tripData[bgId] || {}).reduce((sum, trips) => sum + trips, 0);
-
-            console.log(totalTrips)
             
             content += `
                 <div style="margin-bottom: 10px;">
@@ -744,7 +742,6 @@ require([
                 });
                 
                 if (totalInbound > 0) {
-                    const tripType = selectedMode === "internal" ? "Internal" : "External";
                     tooltipContent += `<br><strong>Inbound ${tripType} Trips:</strong> ${totalInbound}`;
                 }
 
