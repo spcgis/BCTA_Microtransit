@@ -204,14 +204,16 @@ require([
         renderer: tripsRenderer("Total Trips per Block Group")
     });
 
-    blockGroupTripsLayer.features.forEach(function (f) {
-        const trips = parseInt(f.attributes["TotalTripsPerBG"]);
-        const currentRender = tripsRenderer("Total Trips per Block Group");
+    const tripQuery = blockGroupTripsLayer.createQuery();
+
+    blockGroupTripsLayer.queryFeatures(tripQuery).then(function(results) {
+    const currentRender = tripsRenderer("Total Trips per Block Group");
+        results.features.forEach(function (f) {
+        const trips = parseInt(f.attributes["TotalTripsPerBG"]);    
         const breakInfo = currentRender.classBreakInfos.find(info => 
             trips >= info.minValue && tripCount <= info.maxValue
         );
         const color = breakInfo ? breakInfo.symbol.color : currentRender.defaultSymbol.color;
-
         view.graphics.add({
                     geometry: f.geometry,
                     symbol: {
@@ -220,8 +222,8 @@ require([
                         outline: { color: [0, 0, 0, 0], width: 0 } // Transparent border
                     }
                 });
-    }
-    );
+    });
+});
 
     // Add both layers to the map (order matters: outlines first, trips second)
     map.add(blockGroupOutlineLayer);
