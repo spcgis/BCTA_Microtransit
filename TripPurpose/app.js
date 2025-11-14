@@ -234,7 +234,7 @@ require([
         outFields: ["*"],
         visible: true,
         opacity: 0.7,
-        renderer: tripsRenderer("TotalTripsPerBG")  // Apply the renderer here
+        renderer: tripsRenderer(selectedPurpose)  // Apply the renderer here
     });
 
     beaverCountyBG.when(() => {
