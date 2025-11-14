@@ -21,9 +21,9 @@ require([
     // Initialize state variables
     let selectedOrigins = new Set();
     let tripData = {};
-    let selectedDay = "0: All Days (M-Su)";
-    let selectedTime = "All Times (6am-11pm)";
-    let selectedPurpose = "Home_to_Work";
+    let selectedDay = "";
+    let selectedTime = "";
+    let selectedPurpose = "";
 
     // Create tooltip
     const tooltip = document.createElement("div");
@@ -59,9 +59,13 @@ require([
 
     // Update filterDiv innerHTML to include the mode selection dropdown
     filterDiv.innerHTML = `
+    <div>
+        <p>Before clicking on a block group, select filter first.</p>
+    </div>
     <div style="margin-bottom: 10px;">
         <label for="purposeSelect">Trip Purpose:</label>
         <select id="purposeSelect" style="border: 1px solid #ccc">
+            <option value="">Select Trip Purpose</option>
             <option value="Home_to_Work">Home to Work</option>
             <option value="Home_to_Other">Home to Other</option>
             <option value="Non_Home_Based_Trip">Non Home Based</option>
@@ -70,6 +74,7 @@ require([
     <div style="margin-bottom: 10px;">
         <label for="daySelect">Day of Week:</label>
         <select id="daySelect" style="border: ${selectedDay ? '1px solid #ccc' : '1px solid #ff6b6b'}">
+            <option value="">Select Day</option>
             <option value="0: All Days (M-Su)">All (Mon-Sat)</option>
             <option value="1: Monday (M-M)">Monday</option>
             <option value="2: Tuesday (Tu-Tu)">Tuesday</option>
@@ -83,6 +88,7 @@ require([
     <div>
         <label for="timeSelect">Time Period:</label>
         <select id="timeSelect" style="border: ${selectedTime ? '1px solid #ccc' : '1px solid #ff6b6b'}">
+            <option value="">Select Time</option>
             <option value="ALL">All Times (6am-11pm)</option>
             <option value="01: 6am (6am-7am)">6am-7am</option>
             <option value="02: 7am (7am-8am)">7am-8am</option>
@@ -190,7 +196,7 @@ require([
 
     // Layer for trips (class breaks)
     const blockGroupTripsLayer = new FeatureLayer({
-        url: getODTableURL(),
+        url: "https://services3.arcgis.com/MV5wh5WkCMqlwISp/ArcGIS/rest/services/BCTA_Trip_Purpose/FeatureServer/0",
         id: "BlockGroupTrips",
         outFields: ["*"],
         visible: true,
@@ -204,7 +210,7 @@ require([
 
     // Create feature layers
     const beaverCountyBG = new FeatureLayer({
-        url: getODTableURL(),
+        url: "https://services3.arcgis.com/MV5wh5WkCMqlwISp/ArcGIS/rest/services/BCTA_Trip_Purpose/FeatureServer/0",
         id: "BeaverCounty_BG",
         outFields: ["*"],
         visible: true,
@@ -407,6 +413,11 @@ require([
         
         if (!selectedTime) {
             alert("Please select a Time Period");
+            return;
+        }
+
+        if (!selectedPurpose) {
+            alert("Please select a Trip Purpose");
             return;
         }
         
