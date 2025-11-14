@@ -678,6 +678,8 @@ require([
         originFeatures.forEach(feature => {
             const bgId = feature.attributes.GEOID;
             const totalTrips = Object.values(tripData[bgId] || {}).reduce((sum, trips) => sum + trips, 0);
+
+            console.log(totalTrips)
             
             content += `
                 <div style="margin-bottom: 10px;">
