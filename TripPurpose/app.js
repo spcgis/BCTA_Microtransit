@@ -21,8 +21,8 @@ require([
     // Initialize state variables
     let selectedOrigins = new Set();
     let tripData = {};
-    let selectedDay = "";
-    let selectedTime = "";
+    let selectedDay = "0: All Days (M-Su)";
+    let selectedTime = "All Times (6am-11pm)";
     let selectedPurpose = "Home_to_Work";
 
     // Create tooltip
@@ -70,7 +70,6 @@ require([
     <div style="margin-bottom: 10px;">
         <label for="daySelect">Day of Week:</label>
         <select id="daySelect" style="border: ${selectedDay ? '1px solid #ccc' : '1px solid #ff6b6b'}">
-            <option value="">Select Day</option>
             <option value="0: All Days (M-Su)">All (Mon-Sat)</option>
             <option value="1: Monday (M-M)">Monday</option>
             <option value="2: Tuesday (Tu-Tu)">Tuesday</option>
@@ -83,8 +82,7 @@ require([
     </div>
     <div>
         <label for="timeSelect">Time Period:</label>
-        <select id="timeSelect" disabled style="border: ${selectedTime ? '1px solid #ccc' : '1px solid #ff6b6b'}">
-            <option value="">Select Time</option>
+        <select id="timeSelect" style="border: ${selectedTime ? '1px solid #ccc' : '1px solid #ff6b6b'}">
             <option value="ALL">All Times (6am-11pm)</option>
             <option value="01: 6am (6am-7am)">6am-7am</option>
             <option value="02: 7am (7am-8am)">7am-8am</option>
@@ -387,7 +385,7 @@ require([
         });
 
         // Update legend title
-        const modeText = selectedPurpose.replaceAll("_", "").replace("Trip","");
+        const modeText = selectedPurpose.replaceAll("_", " ").replace("Trip","");
         if (legendExpand && legendExpand.content) {
             legendExpand.content.layerInfos[0].title = `Number of ${modeText} Trips`;
         }
@@ -558,7 +556,7 @@ require([
                     const aggregatedTrips = {};
                     results.features.forEach(f => {
                         const destId = f.attributes.Destination_Zone_ID.toString();
-                        const trips = f.attributes[selectedPurpose];
+                        const trips = parseInt(f.attributes[selectedPurpose]);
                         
                         aggregatedTrips[destId] = (aggregatedTrips[destId] || 0) + trips;
                     });
@@ -660,7 +658,7 @@ require([
         const sidePanel = document.getElementById("sidePanel") || createSidePanel();
         
         // Change header
-        const modeTitle = selectedPurpose.replaceAll("_", "").replace("Trip","");
+        const modeTitle = selectedPurpose.replaceAll("_", " ").replace("Trip","");
         
         let content = `
             <div style="text-align: right;">
@@ -723,7 +721,7 @@ require([
             const hoveredBGId = result.graphic.attributes.GEOID;
             let tooltipContent = `<strong>Block Group:</strong> ${hoveredBGId}`;
 
-            const tripType = selectedPurpose.replaceAll("_", "").replace("Trip","");
+            const tripType = selectedPurpose.replaceAll("_", " ").replace("Trip","");
             
             // Check if this is a selected origin
             if (selectedOrigins.has(hoveredBGId)) {
