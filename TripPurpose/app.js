@@ -322,12 +322,7 @@ require([
         // Reset day and time selections when changing modes
         const daySelect = document.getElementById("daySelect");
         const timeSelect = document.getElementById("timeSelect");
-        
-        daySelect.value = "";
-        selectedDay = "";
-        timeSelect.value = "";
-        selectedTime = "";
-        timeSelect.disabled = true;
+
         
         // Update visual feedback
         daySelect.style.border = '1px solid #ff6b6b';
