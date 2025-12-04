@@ -21,9 +21,9 @@ require([
     // Initialize state variables
     let selectedOrigins = new Set();
     let tripData = {};
-    let selectedDay = "";
-    let selectedTime = "";
-    let selectedPurpose = "";
+    let selectedDay = "0: All Days (M-Su)";
+    let selectedTime = "ALL";
+    let selectedPurpose = "Home_to_Work";
 
     // Create tooltip
     const tooltip = document.createElement("div");
@@ -65,7 +65,6 @@ require([
     <div style="margin-bottom: 10px;">
         <label for="purposeSelect">Trip Purpose:</label>
         <select id="purposeSelect" style="border: 1px solid #ccc">
-            <option value="">Select Trip Purpose</option>
             <option value="Home_to_Work">Home to Work</option>
             <option value="Home_to_Other">Home to Other</option>
             <option value="Non_Home_Based_Trip">Non Home Based</option>
@@ -73,8 +72,7 @@ require([
     </div>
     <div style="margin-bottom: 10px;">
         <label for="daySelect">Day of Week:</label>
-        <select id="daySelect" style="border: ${selectedDay ? '1px solid #ccc' : '1px solid #ff6b6b'}">
-            <option value="">Select Day</option>
+        <select id="daySelect" style="border: 1px solid #ccc">
             <option value="0: All Days (M-Su)">All (Mon-Sat)</option>
             <option value="1: Monday (M-M)">Monday</option>
             <option value="2: Tuesday (Tu-Tu)">Tuesday</option>
@@ -87,8 +85,7 @@ require([
     </div>
     <div>
         <label for="timeSelect">Time Period:</label>
-        <select id="timeSelect" style="border: ${selectedTime ? '1px solid #ccc' : '1px solid #ff6b6b'}">
-            <option value="">Select Time</option>
+        <select id="timeSelect" style="border: 1px solid #ccc">
             <option value="ALL">All Times (6am-11pm)</option>
             <option value="01: 6am (6am-7am)">6am-7am</option>
             <option value="02: 7am (7am-8am)">7am-8am</option>
@@ -274,15 +271,15 @@ require([
         selectedDay = e.target.value;
         const timeSelect = document.getElementById("timeSelect");
         
-        // Enable time selection for all options, including "All" (7)
-        if (!selectedDay) {
-            timeSelect.disabled = true;
-            timeSelect.value = "";
-            selectedTime = "";
-        } else {
-            // Always enable time selection regardless of day selection
-            timeSelect.disabled = false;
-        }
+        // // Enable time selection for all options, including "All" (7)
+        // if (!selectedDay) {
+        //     timeSelect.disabled = true;
+        //     timeSelect.value = "";
+        //     selectedTime = "";
+        // } else {
+        //     // Always enable time selection regardless of day selection
+        //     timeSelect.disabled = false;
+        // }
         
         // Update visual feedback
         this.style.border = selectedDay ? '1px solid #ccc' : '1px solid #ff6b6b';
@@ -329,11 +326,11 @@ require([
 
     // Update the updateLayerFilter function to also update the legend title
     function updateLayerFilter() {
-        if (!selectedDay) {
-            console.log("No day selected, clearing graphics");
-            view.graphics.removeAll();
-            return;
-        }
+        // if (!selectedDay) {
+        //     console.log("No day selected, clearing graphics");
+        //     view.graphics.removeAll();
+        //     return;
+        // }
 
         // Create new FeatureLayer instance based on selected mode
         odTable = new FeatureLayer({
@@ -387,21 +384,21 @@ require([
 
     // Click handler
     view.on("click", function(event) {
-        // Validate filters
-        if (!selectedDay) {
-            alert("Please select a Day of Week first");
-            return;
-        }
+        // // Validate filters
+        // if (!selectedDay) {
+        //     alert("Please select a Day of Week first");
+        //     return;
+        // }
         
-        if (!selectedTime) {
-            alert("Please select a Time Period");
-            return;
-        }
+        // if (!selectedTime) {
+        //     alert("Please select a Time Period");
+        //     return;
+        // }
 
-        if (!selectedPurpose) {
-            alert("Please select a Trip Purpose");
-            return;
-        }
+        // if (!selectedPurpose) {
+        //     alert("Please select a Trip Purpose");
+        //     return;
+        // }
         
         view.hitTest(event).then(function(response) {
             const result = response.results.find(r =>
@@ -579,6 +576,7 @@ require([
     // Modify the updateDisplay function
     function updateDisplay() {
         view.graphics.removeAll();
+        blockGroupOutlineLayer.visible = false;
 
         if (selectedOrigins.size === 0) {
             document.getElementById("sidePanel").style.display = "none";
