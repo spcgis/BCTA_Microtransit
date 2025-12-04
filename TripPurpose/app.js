@@ -269,20 +269,14 @@ require([
     // Event handlers for filters
     document.getElementById("daySelect").addEventListener("change", function(e) {
         selectedDay = e.target.value;
-        const timeSelect = document.getElementById("timeSelect");
-        timeSelect.disable = false;
-    
-        // Update visual feedback
-        this.style.border = selectedDay ? '1px solid #ccc' : '1px solid #ff6b6b';
-        timeSelect.style.border = selectedTime ? '1px solid #ccc' : '1px solid #ff6b6b';
+        // Log the selection
+        console.log("Selected time period:", selectedDay === "ALL" ? "All Times" : selectedDay);
         updateLayerFilter();
     });
 
     document.getElementById("timeSelect").addEventListener("change", function(e) {
         selectedTime = e.target.value;
-        // Update visual feedback
-        this.style.border = selectedTime ? '1px solid #ccc' : '1px solid #ff6b6b';
-        
+
         // Log the selection
         console.log("Selected time period:", selectedTime === "ALL" ? "All Times" : selectedTime);
         
@@ -293,26 +287,7 @@ require([
     document.getElementById("purposeSelect").addEventListener("change", function(e) {
         selectedPurpose = e.target.value;
         console.log("Selected purpose:", selectedPurpose);
-        
-        // Reset day and time selections when changing modes
-        const daySelect = document.getElementById("daySelect");
-        const timeSelect = document.getElementById("timeSelect");
-
-        
-        // Update visual feedback
-        daySelect.style.border = '1px solid #ff6b6b';
-        timeSelect.style.border = '1px solid #ff6b6b';
-        
-        // Clear graphics and selections
-        selectedOrigins.clear();
-        tripData = {};
-        clickCount = {};
-        view.graphics.removeAll();
-        
-        // Hide side panel if visible
-        if (document.getElementById("sidePanel")) {
-            document.getElementById("sidePanel").style.display = "none";
-        }
+        updateLayerFilter();
     });
 
     // Update the updateLayerFilter function to also update the legend title
@@ -365,6 +340,11 @@ require([
         tripData = {};
         clickCount = {};
         view.graphics.removeAll();
+
+        // Hide side panel if visible
+        if (document.getElementById("sidePanel")) {
+            document.getElementById("sidePanel").style.display = "none";
+        }
     }
 
     // Click handler
@@ -692,6 +672,7 @@ require([
                     totalInbound += originData[hoveredBGId] || 0;
                 });
                 
+                // Why hide 0 counts?
                 if (totalInbound > 0) {
                     tooltipContent += `<br><strong>Inbound ${tripType} Trips:</strong> ${totalInbound}`;
                 }
@@ -710,6 +691,7 @@ require([
                     totalInbound += originData[hoveredBGId] || 0;
                 });
 
+                // here too
                 if (totalInbound > 0) {
                     tooltipContent += `<br><strong>Inbound ${tripType} Trips:</strong> ${totalInbound}`;
                 } else {
