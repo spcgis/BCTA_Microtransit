@@ -60,12 +60,12 @@ require([
     // Update filterDiv innerHTML to include the mode selection dropdown
     filterDiv.innerHTML = `
     <div>
-        <p>Before clicking on a block group, select filter first.</p>
+        <p>Select your filter then click on a BG.</p>
     </div>
     <div style="margin-bottom: 10px;">
         <label for="purposeSelect">Trip Purpose:</label>
         <select id="purposeSelect" style="border: 1px solid #ccc">
-            <option value="Home_to_Work">Home to Work</option>
+            <option value="Home_to_Work">Total Trips</option>
             <option value="Home_to_Other">Home to Other</option>
             <option value="Non_Home_Based_Trip">Non Home Based</option>
         </select>
@@ -73,7 +73,7 @@ require([
     <div style="margin-bottom: 10px;">
         <label for="daySelect">Day of Week:</label>
         <select id="daySelect" style="border: 1px solid #ccc">
-            <option value="0: All Days (M-Su)">All (Mon-Sat)</option>
+            <option value="0: All Days (M-Su)">Week Days (M-F)</option>
             <option value="1: Monday (M-M)">Monday</option>
             <option value="2: Tuesday (Tu-Tu)">Tuesday</option>
             <option value="3: Wednesday (W-W)">Wednesday</option>
@@ -86,7 +86,7 @@ require([
     <div>
         <label for="timeSelect">Time Period:</label>
         <select id="timeSelect" style="border: 1px solid #ccc">
-            <option value="ALL">All Times (6am-11pm)</option>
+            <option value="ALL">15-Hour Transit Service Day</option>
             <option value="01: 6am (6am-7am)">6am-7am</option>
             <option value="02: 7am (7am-8am)">7am-8am</option>
             <option value="03: 8am (8am-9am)">8am-9am</option>
@@ -112,7 +112,7 @@ require([
         type: "class-breaks",
         defaultSymbol: {
             type: "simple-fill",
-            color: [180, 230, 180, 0.6], // transparent for no trips
+            color: [180, 230, 180, 0.7], // transparent for no trips
             outline: { color: [0, 128, 0], width: 1 }
         },
         classBreakInfos: [
@@ -174,7 +174,7 @@ require([
         type: "simple",
         symbol: {
             type: "simple-fill",
-            color: [180, 230, 180, 0.6], // light green
+            color: [180, 230, 180, 0], // transparent green
             outline: { color: [0, 128, 0], width: 1 }
         }
     };
@@ -405,7 +405,7 @@ require([
                     return queryTable.queryFeatures({
                         where: whereClause,
                         outFields: ["*"],
-                        returnGeometry: false
+                        returnGeometry: true
                     });
                 }).then(function(results) {
                     console.log("Query results:", {
@@ -464,7 +464,7 @@ require([
                 const query = {
                     where: whereClause,
                     outFields: ["*"],
-                    returnGeometry: false
+                    returnGeometry: true
                 };
                 
                 // Log the query details
