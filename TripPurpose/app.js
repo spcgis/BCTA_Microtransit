@@ -228,7 +228,6 @@ require([
         id: "OD_Table",
         outFields: ["*"],
         visible: false,
-        opacity: 0.7,
         definitionExpression: "1=1"
     });
 
@@ -297,8 +296,7 @@ require([
             url: getODTableURL(),
             id: "OD_Table",
             outFields: ["*"],
-            visible: false,
-            opacity: 0.7
+            visible: false
         });
 
         // Special handling for "All Days" option
