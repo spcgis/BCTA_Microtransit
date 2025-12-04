@@ -270,17 +270,8 @@ require([
     document.getElementById("daySelect").addEventListener("change", function(e) {
         selectedDay = e.target.value;
         const timeSelect = document.getElementById("timeSelect");
-        
-        // // Enable time selection for all options, including "All" (7)
-        // if (!selectedDay) {
-        //     timeSelect.disabled = true;
-        //     timeSelect.value = "";
-        //     selectedTime = "";
-        // } else {
-        //     // Always enable time selection regardless of day selection
-        //     timeSelect.disabled = false;
-        // }
-        
+        timeSelect.disable = false;
+    
         // Update visual feedback
         this.style.border = selectedDay ? '1px solid #ccc' : '1px solid #ff6b6b';
         timeSelect.style.border = selectedTime ? '1px solid #ccc' : '1px solid #ff6b6b';
@@ -326,12 +317,6 @@ require([
 
     // Update the updateLayerFilter function to also update the legend title
     function updateLayerFilter() {
-        // if (!selectedDay) {
-        //     console.log("No day selected, clearing graphics");
-        //     view.graphics.removeAll();
-        //     return;
-        // }
-
         // Create new FeatureLayer instance based on selected mode
         odTable = new FeatureLayer({
             url: getODTableURL(),
@@ -384,22 +369,6 @@ require([
 
     // Click handler
     view.on("click", function(event) {
-        // // Validate filters
-        // if (!selectedDay) {
-        //     alert("Please select a Day of Week first");
-        //     return;
-        // }
-        
-        // if (!selectedTime) {
-        //     alert("Please select a Time Period");
-        //     return;
-        // }
-
-        // if (!selectedPurpose) {
-        //     alert("Please select a Trip Purpose");
-        //     return;
-        // }
-        
         view.hitTest(event).then(function(response) {
             const result = response.results.find(r =>
                 r.graphic?.layer?.id === "BeaverCounty_BG"
@@ -576,7 +545,6 @@ require([
     // Modify the updateDisplay function
     function updateDisplay() {
         view.graphics.removeAll();
-        blockGroupOutlineLayer.visible = false;
 
         if (selectedOrigins.size === 0) {
             document.getElementById("sidePanel").style.display = "none";
