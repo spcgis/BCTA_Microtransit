@@ -107,12 +107,11 @@ require([
     // Define the class breaks renderer
     const tripsRenderer = {
         type: "class-breaks",
-        defaultSymbol: {
+        defaultSymbol: [{
             type: "simple-fill",
             color: [180, 230, 180, 0.6], // default green
-            outline: { color: [0, 128, 0], width: 1 },
-            label: "0 trip"
-        },
+            outline: { color: [0, 128, 0], width: 1 }
+        }, label: "0 trip"],
         classBreakInfos: [,
             {
                 minValue: 1,
