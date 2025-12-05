@@ -565,7 +565,7 @@ require([
                         symbol: {
                             type: "simple-fill",
                             color: color,
-                            outline: { color: [0, 128, 0], width: 1 } // Transparent border
+                            outline: { color: [0, 128, 0], width: 1 } // Green border
                         }
                     });
                 });
@@ -668,7 +668,6 @@ require([
                     totalInbound += originData[hoveredBGId] || 0;
                 });
                 
-                // Why hide 0 counts?
                 if (totalInbound > 0) {
                     tooltipContent += `<br><strong>Inbound ${tripType} Trips:</strong> ${totalInbound}`;
                 }
@@ -687,7 +686,6 @@ require([
                     totalInbound += originData[hoveredBGId] || 0;
                 });
 
-                // here too
                 if (totalInbound > 0) {
                     tooltipContent += `<br><strong>Inbound ${tripType} Trips:</strong> ${totalInbound}`;
                 } else {
@@ -717,6 +715,6 @@ require([
         const breakInfo = tripsRenderer.classBreakInfos.find(info => 
             tripCount >= info.minValue && tripCount <= info.maxValue
         );
-        return breakInfo ? breakInfo.symbol.color : [180, 230, 180, 0];
+        return breakInfo ? breakInfo.symbol.color : [0, 0, 0, 0];
     }
 });
