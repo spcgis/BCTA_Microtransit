@@ -722,6 +722,6 @@ require([
         const breakInfo = tripsRenderer.classBreakInfos.find(info => 
             tripCount >= info.minValue && tripCount <= info.maxValue
         );
-        return breakInfo ? breakInfo.symbol.color : [180, 230, 180, 0];
+        return breakInfo ? breakInfo.symbol.color : tripsRenderer.defaultSymbol.color;
     }
 });
