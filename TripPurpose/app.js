@@ -451,10 +451,10 @@ require([
                 let whereClause;
                 if (selectedDay === "0: All Days (M-Su)") {
                     // Include all weekdays (1-6) as there's no pre-aggregated data
-                    whereClause = `Origin = '${clickedBGId}' AND Day_Type IN ('1: Monday (M-M)', '2: Tuesday (Tu-Tu)', '3: Wednesday (W-W)', '4: Thursday (Th-Th)', '5: Friday (F-F)', '6: Saturday (Sa-Sa)', '7: Sunday (Su-Su)') AND Day_Part = '${selectedTime}'`;
+                    whereClause = `Origin_Zone_ID = '${clickedBGId}' AND Day_Type IN ('1: Monday (M-M)', '2: Tuesday (Tu-Tu)', '3: Wednesday (W-W)', '4: Thursday (Th-Th)', '5: Friday (F-F)', '6: Saturday (Sa-Sa)', '7: Sunday (Su-Su)') AND Day_Part = '${selectedTime}'`;
                 } else {
                     // For specific days, use the selected day
-                    whereClause = `Origin = '${clickedBGId}' AND Day_Type = '${selectedDay}' AND Day_Part = '${selectedTime}'`;
+                    whereClause = `Origin_Zone_ID = '${clickedBGId}' AND Day_Type = '${selectedDay}' AND Day_Part = '${selectedTime}'`;
                 }
                 
                 console.log("Query for specific time:", whereClause);
