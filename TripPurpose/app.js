@@ -59,6 +59,9 @@ require([
 
     // Update filterDiv innerHTML to include the mode selection dropdown
     filterDiv.innerHTML = `
+    <div>
+        <p>Before clicking on a block group, select filter first.</p>
+    </div>
     <div style="margin-bottom: 10px;">
         <label for="purposeSelect">Trip Purpose:</label>
         <select id="purposeSelect" style="border: 1px solid #ccc">
@@ -230,19 +233,19 @@ require([
     }
     
     // Modify the OD table setup
-    // let odTable = new FeatureLayer({
-    //     url: getODTableURL(),
-    //     id: "OD_Table",
-    //     outFields: ["*"],
-    //     visible: false,
-    //     definitionExpression: "1=1"
-    // });
+    let odTable = new FeatureLayer({
+        url: getODTableURL(),
+        id: "OD_Table",
+        outFields: ["*"],
+        visible: false,
+        definitionExpression: "1=1"
+    });
 
-    // odTable.when(() => {
-    //     console.log("OD Table fields:", 
-    //         odTable.fields.map(f => ({name: f.name, type: f.type}))
-    //     );
-    // });
+    odTable.when(() => {
+        console.log("OD Table fields:", 
+            odTable.fields.map(f => ({name: f.name, type: f.type}))
+        );
+    });
 
     map.add(beaverCountyBG);
 
@@ -298,47 +301,47 @@ require([
 
     // Update the updateLayerFilter function to also update the legend title
     function updateLayerFilter() {
-        // // Create new FeatureLayer instance based on selected mode
-        // odTable = new FeatureLayer({
-        //     url: getODTableURL(),
-        //     id: "OD_Table",
-        //     outFields: ["*"],
-        //     visible: false
-        // });
+        // Create new FeatureLayer instance based on selected mode
+        odTable = new FeatureLayer({
+            url: getODTableURL(),
+            id: "OD_Table",
+            outFields: ["*"],
+            visible: false
+        });
 
-        // // Special handling for "All Days" option
-        // let whereClause;
-        // if (selectedDay === "0: All Days (M-Su)") {
-        //     // Include all weekdays (1-6) as there's no pre-aggregated data
-        //     whereClause = "Day_Type IN ('1: Monday (M-M)', '2: Tuesday (Tu-Tu)', '3: Wednesday (W-W)', '4: Thursday (Th-Th)', '5: Friday (F-F)', '6: Saturday (Sa-Sa)', '7: Sunday (Su-Su)')";
-        // } else {
-        //     // For specific days, use the selected day
-        //     whereClause = `Day_Type = '${selectedDay}'`;
-        // }
+        // Special handling for "All Days" option
+        let whereClause;
+        if (selectedDay === "0: All Days (M-Su)") {
+            // Include all weekdays (1-6) as there's no pre-aggregated data
+            whereClause = "Day_Type IN ('1: Monday (M-M)', '2: Tuesday (Tu-Tu)', '3: Wednesday (W-W)', '4: Thursday (Th-Th)', '5: Friday (F-F)', '6: Saturday (Sa-Sa)', '7: Sunday (Su-Su)')";
+        } else {
+            // For specific days, use the selected day
+            whereClause = `Day_Type = '${selectedDay}'`;
+        }
         
-        // // Apply time filter only if not "ALL"
-        // if (selectedTime && selectedTime !== "ALL") {
-        //     whereClause += ` AND Day_Part = '${selectedTime}'`;
-        // }
+        // Apply time filter only if not "ALL"
+        if (selectedTime && selectedTime !== "ALL") {
+            whereClause += ` AND Day_Part = '${selectedTime}'`;
+        }
 
-        // odTable.definitionExpression = whereClause;
+        odTable.definitionExpression = whereClause;
 
-        // // Wait for layer to load before querying
-        // odTable.load().then(() => {
-        //     odTable.queryFeatureCount({
-        //         where: whereClause
-        //     }).then(count => {
-        //         console.log(`Found ${count} records in table for day ${selectedDay}${selectedTime ? `, time ${selectedTime === 'ALL' ? 'All Times' : selectedTime}` : ''}`);
-        //     });
-        // }).catch(error => {
-        //     console.error("Error loading OD table:", error);
-        // });
+        // Wait for layer to load before querying
+        odTable.load().then(() => {
+            odTable.queryFeatureCount({
+                where: whereClause
+            }).then(count => {
+                console.log(`Found ${count} records in table for day ${selectedDay}${selectedTime ? `, time ${selectedTime === 'ALL' ? 'All Times' : selectedTime}` : ''}`);
+            });
+        }).catch(error => {
+            console.error("Error loading OD table:", error);
+        });
 
-        // // Update legend title
-        // const modeText = selectedPurpose.replaceAll("_", " ").replace("Trip","");
-        // if (legendExpand && legendExpand.content) {
-        //     legendExpand.content.layerInfos[0].title = `Number of ${modeText} Trips`;
-        // }
+        // Update legend title
+        const modeText = selectedPurpose.replaceAll("_", " ").replace("Trip","");
+        if (legendExpand && legendExpand.content) {
+            legendExpand.content.layerInfos[0].title = `Number of ${modeText} Trips`;
+        }
 
         // Clear existing selections
         selectedOrigins.clear();
