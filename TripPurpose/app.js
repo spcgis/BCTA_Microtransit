@@ -113,7 +113,7 @@ require([
             outline: { color: [0, 128, 0], width: 1 },
         },
         defaultLabel: "0 trip",
-        classBreakInfos: [,
+        classBreakInfos: [
             {
                 minValue: 1,
                 maxValue: 5,
@@ -590,7 +590,7 @@ require([
     }
 
     // Function to update side panel content
-    function updateSidePanel(originFeatures, combinedTrips) {
+    function updateSidePanel(originFeatures) {
         const sidePanel = document.getElementById("sidePanel") || createSidePanel();
         
         // Change header
