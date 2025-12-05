@@ -109,10 +109,20 @@ require([
         type: "class-breaks",
         defaultSymbol: {
             type: "simple-fill",
-            color: [180, 230, 180, 0.6], // transparent for no trips
+            color: [180, 230, 180, 0], // no fill, border only
             outline: { color: [0, 128, 0], width: 1 }
         },
-        classBreakInfos: [
+        classBreakInfos: [,
+            {
+                minValue: 0,
+                maxValue: 0,
+                symbol: {
+                    type: "simple-fill",
+                    color: [180, 230, 180, 0.6],
+                    outline: { color: [0, 128, 0], width: 1 }
+                },
+                label: "0 trip"
+            },
             {
                 minValue: 1,
                 maxValue: 5,
@@ -194,7 +204,7 @@ require([
         url: "https://services3.arcgis.com/MV5wh5WkCMqlwISp/ArcGIS/rest/services/BCTA_Trip_Purpose/FeatureServer/0",
         id: "BeaverCounty_BG",
         outFields: ["*"],
-        visible: true,
+        visible: false,
         opacity: 0.7,
         renderer: tripsRenderer  // Apply the renderer here
     });
@@ -344,6 +354,10 @@ require([
 
     // Click handler
     view.on("click", function(event) {
+        if (!beaverCountyBG.visible) {
+            beaverCountyBG.visible = true;
+        }
+
         view.hitTest(event).then(function(response) {
             const result = response.results.find(r =>
                 r.graphic?.layer?.id === "BeaverCounty_BG"
@@ -367,6 +381,10 @@ require([
                 delete tripData[clickedBGId];
                 updateDisplay();
                 return;
+            }
+
+            if (len(selectedOrigins) === 0) {
+            beaverCountyBG.visible = false;
             }
 
             // If not selected, add it
