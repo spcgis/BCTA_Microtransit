@@ -565,7 +565,7 @@ require([
                         symbol: {
                             type: "simple-fill",
                             color: color,
-                            outline: { color: [0, 0, 0, 0], width: 0 } // Transparent border
+                            outline: { color: [0, 128, 0], width: 1 } // Transparent border
                         }
                     });
                 });
@@ -717,6 +717,6 @@ require([
         const breakInfo = tripsRenderer.classBreakInfos.find(info => 
             tripCount >= info.minValue && tripCount <= info.maxValue
         );
-        return breakInfo ? breakInfo.symbol.color : tripsRenderer.defaultSymbol.color;
+        return breakInfo ? breakInfo.symbol.color : [180, 230, 180, 0];
     }
 });
