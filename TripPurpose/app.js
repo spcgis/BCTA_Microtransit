@@ -112,6 +112,7 @@ require([
             color: [180, 230, 180, 0.6], // transparent for no trips
             outline: { color: [0, 128, 0], width: 1 }
         },
+        defaultLabel: "0 trip",
         classBreakInfos: [
             {
                 minValue: 1,
