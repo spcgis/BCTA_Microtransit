@@ -195,7 +195,7 @@ require([
         url: "https://services3.arcgis.com/MV5wh5WkCMqlwISp/ArcGIS/rest/services/BCTA_Trip_Purpose/FeatureServer/0",
         id: "BeaverCounty_BG",
         outFields: ["*"],
-        visible: true,
+        visible: false,
         opacity: 0.7,
         renderer: tripsRenderer  // Apply the renderer here
     });
@@ -369,6 +369,10 @@ require([
                 delete tripData[clickedBGId];
                 updateDisplay();
                 return;
+            }
+
+            if (len(selectedOrigins) === 0) {
+            beaverCountyBG.visible = false;
             }
 
             // If not selected, add it
