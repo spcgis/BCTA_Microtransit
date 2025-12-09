@@ -1,5 +1,8 @@
-html,
-body,
+body, html {
+    margin: 5px;
+    padding: 0px;
+    height: 100%;
+}
 #viewDiv {
     padding: 0;
     margin: 0;
@@ -25,24 +28,23 @@ body,
     border-radius: 3px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
-
-#container {
+.container {
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
     overflow-y: auto;
-    color: #2e55a5;
 }
-#header-container {
+.header-container {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    width: 100%
+    width: 100%;
+    background-color: #2e55a5
 }
-#main-header{
+.main-header{
     width: 55%; 
 }
-#logos{
+.logos{
     display: flex;
     flex-direction: row-reverse;
     flex-wrap: wrap;
@@ -51,4 +53,25 @@ body,
     align-items: center;
     width: 45%;
     gap: 15px;
+
+}
+.controls {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap
+}
+.SPC-logo {
+    height: clamp(50px, 95px, 150px);
+    width: auto
+}
+.Dept-logo {
+    height: clamp(50px, 65px, 90px);
+    width: auto; 
+}
+
+/* Media query to hide .logos on small screens */
+@media (max-width: 768px) {
+    .logos {
+    display: none;
+    }
 }
