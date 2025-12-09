@@ -552,7 +552,7 @@ require([
             max-height: 400px;
             overflow-y: auto;
         `;
-        document.getElementById("viewDiv").appendChild(sidePanel);
+        view.ui.add(sidePanel, "top-left");
         return sidePanel;
     }
 
