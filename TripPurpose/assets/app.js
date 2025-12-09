@@ -60,6 +60,7 @@ require([
     // Update filterDiv innerHTML to include the mode selection dropdown
     filterDiv.innerHTML = `
     <div style="margin-bottom: 10px;">
+        <p>Click on a block group to select as origin. Filter trip counts by:</p>
         <label for="purposeSelect">Trip Purpose:</label></br>
         <select id="purposeSelect" style="border: 1px solid #ccc">
             <option value="All_Purposes">All Purposes</option>
@@ -102,6 +103,7 @@ require([
             <option value="13: 6pm (6pm-7pm)">6pm-7pm</option>
             <option value="14: 7pm (7pm-8pm)">7pm-8pm</option>
         </select>
+        <p style="font-size:smaller;">*Estimates are daily averages.</p>
     </div>
     `;
     view.ui.add(filterDiv, "top-right");
@@ -538,8 +540,8 @@ require([
         sidePanel.id = "sidePanel";
         sidePanel.style.cssText = `
             position: absolute;
-            top: 128px;
-            left: 63px;
+            top: 15px;
+            left: 20px;
             background: white;
             padding: 15px;
             border-radius: 3px;
@@ -550,7 +552,7 @@ require([
             max-height: 400px;
             overflow-y: auto;
         `;
-        document.body.appendChild(sidePanel);
+        document.viewDiv.appendChild(sidePanel);
         return sidePanel;
     }
 
