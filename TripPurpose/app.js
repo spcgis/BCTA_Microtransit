@@ -290,6 +290,7 @@ require([
 
         // Handle spare data
         const nonZeroData = sortedData.filter(val => val !== 0);
+        console.log(nonZeroData);
         if (nonZeroData.length < numClasses) {
             return [5, 10, 25, 50];
         } else {
@@ -301,6 +302,7 @@ require([
                 endValue = Math.round(endValue / 5) * 5;
                 quantiles.push(endValue);            
             }
+
             return quantiles;
         }
     }
@@ -502,7 +504,6 @@ require([
                 }
                 else if (tripCounts.length > 0) {
                     tripCounts.sort((a,b) => a - b);
-                    console.log(tripCounts);
                     quantiles = calculateQuantiles(tripCounts);
                     console.log(quantiles);
                     tripRenderer = generateRenderer(quantiles);
