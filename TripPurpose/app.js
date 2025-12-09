@@ -340,10 +340,10 @@ require([
 
             // Add renderer
             if (!selectedOrigins) {
+                beaverCountyBG.renderer = initialRenderer;
+            } else {
                 tripRenderer = generateRenderer([5, 10, 25, 50]);
                 beaverCountyBG.renderer = tripRenderer;
-            } else {
-                beaverCountyBG.renderer = initialRenderer;
             }
             
             // Use the appropriate table URL
