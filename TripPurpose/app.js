@@ -290,21 +290,10 @@ require([
         const quantileSize = Math.floor(sortedData.length / numClasses);
         const quantiles = [];
 
-        for (let i = 1; i < numClasses; i++) {
-            let minValue = sortedData[i * quantileSize];
-            let maxValue = (i + 1 === numClasses) ? sortedData[sortedData.length - 1] : sortedData[(i + 1) * quantileSize - 1];
-
-            // Adjust the last maxValue to the real maxValue
-            if (i === numClasses - 1 && maxValue < sortedData[sortedData.length - 1]) {
-                maxValue = Math.round(sortedData[sortedData.length - 1] / 5) *5;
-            }
-
-            // make them multiples of 5
-            minValue = Math.round(minValue / 5) * 5;
-            maxValue = Math.round(maxValue / 5) * 5;
-
-            quantiles.push([minValue, maxValue]);            
-
+        for (let i = 0; i < numClasses; i++) {
+            let endValue = (i + 1 === numClasses) ? sortedData[sortedData.length - 1] : sortedData[(i + 1) * quantileSize - 1];
+            endValue = Math.round(endValue / 5) * 5;
+            quantiles.push(endValue);            
         }
 
         return quantiles;
