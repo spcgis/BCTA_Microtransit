@@ -106,69 +106,6 @@ require([
     `;
     view.ui.add(filterDiv, "top-right");
 
-    // Define the class breaks renderer
-    // const tripsRenderer = {
-    //     type: "class-breaks",
-    //     defaultSymbol: {
-    //         type: "simple-fill",
-    //         color: [180, 230, 180, 0.6], // green for no trips
-    //         outline: { color: [0, 128, 0], width: 1 }
-    //     },
-    //     defaultLabel: "0 trip",
-    //     classBreakInfos: [
-    //         {
-    //             minValue: 1,
-    //             maxValue: 5,
-    //             symbol: {
-    //                 type: "simple-fill",
-    //                 color: [255, 241, 169, 0.7],
-    //                 outline: { color: [0, 128, 0], width: 1 }
-    //             },
-    //             label: "1-5 trips"
-    //         },
-    //         {
-    //             minValue: 6,
-    //             maxValue: 15,
-    //             symbol: {
-    //                 type: "simple-fill",
-    //                 color: [254, 204, 92, 0.7],
-    //                 outline: { color: [0, 128, 0], width: 1 }
-    //             },
-    //             label: "6-15 trips"
-    //         },
-    //         {
-    //             minValue: 16,
-    //             maxValue: 25,
-    //             symbol: {
-    //                 type: "simple-fill",
-    //                 color: [253, 141, 60, 0.7],
-    //                 outline: { color: [0, 128, 0], width: 1 }
-    //             },
-    //             label: "16-25 trips"
-    //         },
-    //         {
-    //             minValue: 26,
-    //             maxValue: 50,
-    //             symbol: {
-    //                 type: "simple-fill",
-    //                 color: [240, 59, 32, 0.7],
-    //                 outline: { color: [0, 128, 0], width: 1 }
-    //             },
-    //             label: "26-50 trips"
-    //         },
-    //         {
-    //             minValue: 51,
-    //             maxValue: 99999,
-    //             symbol: {
-    //                 type: "simple-fill",
-    //                 color: [189, 0, 38, 0.7],
-    //                 outline: { color: [0, 128, 0], width: 1 }
-    //             },
-    //             label: ">50 trips"
-    //         }
-    //     ]
-    // };
-
     // Default green renderer for block groups
     const greenRenderer = {
         type: "simple",
@@ -286,28 +223,7 @@ require([
         updateLayerFilter();
     });
 
-    function calculateQuantiles(sortedData, numClasses = 5) {
-
-        // Handle spare data
-        const nonZeroData = sortedData.filter(val => val !== 0);
-        console.log(nonZeroData);
-        if (nonZeroData.length < numClasses) {
-            return [5, 10, 25, 50];
-        } else {
-            const quantileSize = Math.floor(nonZeroData.length / numClasses);
-            const quantiles = [];
-
-            for (let i = 0; i < numClasses; i++) {
-                let endValue = (i + 1 === numClasses) ? nonZeroData[nonZeroData.length - 1] : nonZeroData[(i + 1) * quantileSize - 1];
-                endValue = Math.round(endValue / 5) * 5;
-                quantiles.push(endValue);            
-            }
-
-            return quantiles;
-        }
-    }
-
-    function generateRenderer(quantiles) {
+    function generateRenderer(breaks) {
         return {
             type: "class-breaks",
             defaultSymbol: {
@@ -319,53 +235,53 @@ require([
             classBreakInfos: [
             {
                 minValue: 1,
-                maxValue: quantiles[0],
+                maxValue: breaks[0],
                 symbol: {
                     type: "simple-fill",
                     color: [255, 241, 169, 0.7],
                     outline: { color: [0, 128, 0], width: 1 }
                 },
-                label: `1-${quantiles[0]} trips`
+                label: `1-${breaks[0]} trips`
             },
             {
-                minValue: quantiles[0]+1,
-                maxValue: quantiles[1],
+                minValue: breaks[0]+1,
+                maxValue: breaks[1],
                 symbol: {
                     type: "simple-fill",
                     color: [254, 204, 92, 0.7],
                     outline: { color: [0, 128, 0], width: 1 }
                 },
-                label: `${quantiles[0]+1}-${quantiles[1]} trips`
+                label: `${breaks[0]+1}-${breaks[1]} trips`
             },
             {
-                minValue: quantiles[1]+1,
-                maxValue: quantiles[2],
+                minValue: breaks[1]+1,
+                maxValue: breaks[2],
                 symbol: {
                     type: "simple-fill",
                     color: [253, 141, 60, 0.7],
                     outline: { color: [0, 128, 0], width: 1 }
                 },
-                label: `${quantiles[1]+1}-${quantiles[2]} trips`
+                label: `${breaks[1]+1}-${breaks[2]} trips`
             },
             {
-                minValue: quantiles[2]+1,
-                maxValue: quantiles[3],
+                minValue: breaks[2]+1,
+                maxValue: breaks[3],
                 symbol: {
                     type: "simple-fill",
                     color: [240, 59, 32, 0.7],
                     outline: { color: [0, 128, 0], width: 1 }
                 },
-                label: `${quantiles[2]+1}-${quantiles[3]} trips`
+                label: `${breaks[2]+1}-${breaks[3]} trips`
             },
             {
-                minValue: quantiles[3]+1,
+                minValue: breaks[3]+1,
                 maxValue: 99999999999,
                 symbol: {
                     type: "simple-fill",
                     color: [189, 0, 38, 0.7],
                     outline: { color: [0, 128, 0], width: 1 }
                 },
-                label: `>${quantiles[3]} trips`
+                label: `>${breaks[3]} trips`
             }
         ]};
     }
@@ -496,17 +412,9 @@ require([
                     totalTrips: Object.values(aggregatedTrips).reduce((sum, trips) => sum + trips, 0)
                 });
 
-                // Flatten counts
-                const tripCounts = Object.values(tripData).map(destData => Object.values(destData)).flat();
-                if (tripCounts.reduce((acc, currentValue) => acc + currentValue, 0) < 150) {
+                // Add renderer
+                if (tripData.length > 0) {
                     tripRenderer = generateRenderer([5, 10, 25, 50]);
-                    beaverCountyBG.renderer = tripRenderer;
-                }
-                else if (tripCounts.length > 0) {
-                    tripCounts.sort((a,b) => a - b);
-                    quantiles = calculateQuantiles(tripCounts);
-                    console.log(quantiles);
-                    tripRenderer = generateRenderer(quantiles);
                     beaverCountyBG.renderer = tripRenderer;
                 } else {
                     beaverCountyBG.renderer = initialRenderer;
