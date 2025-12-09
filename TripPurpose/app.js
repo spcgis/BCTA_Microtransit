@@ -3,9 +3,8 @@ require([
     "esri/views/MapView",
     "esri/layers/FeatureLayer",
     "esri/widgets/Legend",
-    "esri/widgets/Expand",
-    "esri/renderers/ClassBreaksRenderer"
-], function(Map, MapView, FeatureLayer, Legend, Expand, ClassBreaksRenderer) {
+    "esri/widgets/Expand"
+], function(Map, MapView, FeatureLayer, Legend, Expand) {
 
     // Initialize map with neutral basemap
     const map = new Map({
@@ -107,76 +106,69 @@ require([
     `;
     view.ui.add(filterDiv, "top-right");
 
-    // // Define the class breaks renderer
-    // const tripsRenderer = {
-    //     type: "class-breaks",
-    //     defaultSymbol: {
-    //         type: "simple-fill",
-    //         color: [180, 230, 180, 0.6], // green for no trips
-    //         outline: { color: [0, 128, 0], width: 1 }
-    //     },
-    //     defaultLabel: "0 trip",
-    //     classBreakInfos: [
-    //         {
-    //             minValue: 1,
-    //             maxValue: 10,
-    //             symbol: {
-    //                 type: "simple-fill",
-    //                 color: [255, 241, 169, 0.7],
-    //                 outline: { color: [0, 128, 0], width: 1 }
-    //             },
-    //             label: "1-10 trips"
-    //         },
-    //         {
-    //             minValue: 11,
-    //             maxValue: 25,
-    //             symbol: {
-    //                 type: "simple-fill",
-    //                 color: [254, 204, 92, 0.7],
-    //                 outline: { color: [0, 128, 0], width: 1 }
-    //             },
-    //             label: "11-25 trips"
-    //         },
-    //         {
-    //             minValue: 26,
-    //             maxValue: 50,
-    //             symbol: {
-    //                 type: "simple-fill",
-    //                 color: [253, 141, 60, 0.7],
-    //                 outline: { color: [0, 128, 0], width: 1 }
-    //             },
-    //             label: "26-50 trips"
-    //         },
-    //         {
-    //             minValue: 51,
-    //             maxValue: 100,
-    //             symbol: {
-    //                 type: "simple-fill",
-    //                 color: [240, 59, 32, 0.7],
-    //                 outline: { color: [0, 128, 0], width: 1 }
-    //             },
-    //             label: "51-100 trips"
-    //         },
-    //         {
-    //             minValue: 101,
-    //             maxValue: 99999,
-    //             symbol: {
-    //                 type: "simple-fill",
-    //                 color: [189, 0, 38, 0.7],
-    //                 outline: { color: [0, 128, 0], width: 1 }
-    //             },
-    //             label: ">100 trips"
-    //         }
-    //     ]
-    // };
+    // Define the class breaks renderer
+    const tripsRenderer = {
+        type: "class-breaks",
+        defaultSymbol: {
+            type: "simple-fill",
+            color: [180, 230, 180, 0.6], // green for no trips
+            outline: { color: [0, 128, 0], width: 1 }
+        },
+        defaultLabel: "0 trip",
+        classBreakInfos: [
+            {
+                minValue: 1,
+                maxValue: 5,
+                symbol: {
+                    type: "simple-fill",
+                    color: [255, 241, 169, 0.7],
+                    outline: { color: [0, 128, 0], width: 1 }
+                },
+                label: "1-5 trips"
+            },
+            {
+                minValue: 6,
+                maxValue: 15,
+                symbol: {
+                    type: "simple-fill",
+                    color: [254, 204, 92, 0.7],
+                    outline: { color: [0, 128, 0], width: 1 }
+                },
+                label: "6-15 trips"
+            },
+            {
+                minValue: 16,
+                maxValue: 25,
+                symbol: {
+                    type: "simple-fill",
+                    color: [253, 141, 60, 0.7],
+                    outline: { color: [0, 128, 0], width: 1 }
+                },
+                label: "16-25 trips"
+            },
+            {
+                minValue: 26,
+                maxValue: 50,
+                symbol: {
+                    type: "simple-fill",
+                    color: [240, 59, 32, 0.7],
+                    outline: { color: [0, 128, 0], width: 1 }
+                },
+                label: "26-50 trips"
+            },
+            {
+                minValue: 51,
+                maxValue: 99999,
+                symbol: {
+                    type: "simple-fill",
+                    color: [189, 0, 38, 0.7],
+                    outline: { color: [0, 128, 0], width: 1 }
+                },
+                label: ">50 trips"
+            }
+        ]
+    };
 
-    // function getColorFromRenderer(tripCount) {
-    //     const breakInfo = tripsRenderer.classBreakInfos.find(info => 
-    //         tripCount >= info.minValue && tripCount <= info.maxValue
-    //     );
-    //     return breakInfo ? breakInfo.symbol.color : [0, 0, 0, 0];
-    // }
-    
     // Default green renderer for block groups
     const greenRenderer = {
         type: "simple",
@@ -206,8 +198,8 @@ require([
         id: "BeaverCounty_BG",
         outFields: ["*"],
         visible: true,
-        opacity: 0.7
-       // renderer: tripsRenderer  // Apply the renderer here
+        opacity: 0.7,
+        renderer: tripsRenderer  // Apply the renderer here
     });
 
     beaverCountyBG.when(() => {
@@ -283,48 +275,6 @@ require([
         console.log("Selected purpose:", selectedPurpose);
         updateLayerFilter();
     });
-
-    function calculateQuantiles(sortedData, numClasses = 5) {
-        const quantileSize = Math.floor(sortedData.length / numClasses);
-        const quantiles = [];
-
-        for (let i = 0; i < numClasses; i++) {
-            let minValue = sortedData[i * quantileSize];
-            let maxValue = (i + 1 === numClasses) ? sortedData[sortedData.length - 1] : sortedData[(i + 1) * quantileSize - 1];
-
-            // Adjust the last maxValue to the real maxValue
-            if (i === numClasses - 1 && maxValue < sortedData[sortedData.length - 1]) {
-                maxValue = roundToMultipleOf5(sortedData[sortedData.length - 1]);
-            }
-
-            // make them multiples of 5
-            minValue = Math.round(minValue / 5) * 5;
-            maxValue = Math.round(maxValue / 5) * 5;
-
-            quantiles.push([minValue, maxValue]);            
-
-        }
-
-        return quantiles;
-    }
-
-    function getColorForIndex(index) {
-        const colors = [
-            [255, 241, 169, 0.7],  
-            [254, 204, 92, 0.7],   
-            [253, 141, 60, 0.7],   
-            [240, 59, 32, 0.7],    
-            [189, 0, 38, 0.7]      
-        ];
-        return colors[index];
-    }
-
-    function getColorFromRenderer(renderer, tripCount) {
-        const breakInfo = renderer.classBreakInfos.find(info => 
-            tripCount >= info.minValue && tripCount <= info.maxValue
-        );
-        return breakInfo ? breakInfo.symbol.color : [0, 0, 0, 0];
-    }
 
     // Update the updateLayerFilter function to also update the legend title
     function updateLayerFilter() {
@@ -449,6 +399,141 @@ require([
             }).catch(error => {
                 console.error("Error querying all time periods:", error);
             });
+
+            
+            // // Execute the appropriate query based on time and day selections
+            // if (selectedTime === "Proposed") {
+            //     // Special handling for "Proposed" option
+            //     let whereClause;                
+            //     let averagingDays;
+            //     if (selectedDay === "Proposed") {
+            //         // Include all weekdays (1-6) as there's no pre-aggregated data
+            //         whereClause = `Origin_Zone_ID = '${clickedBGId}' AND Day_Type IN ('1: Monday (M-M)', '2: Tuesday (Tu-Tu)', '3: Wednesday (W-W)', '4: Thursday (Th-Th)', '5: Friday (F-F)')`;
+            //         averagingDays = true;
+            //     } else {
+            //         // For specific days, use the selected day
+            //         whereClause = `Origin_Zone_ID = '${clickedBGId}' AND Day_Type = '${selectedDay}'`;
+            //         averagingDays = false;
+            //     }
+                
+            //     console.log("Query for ALL times:", whereClause);
+                
+            //     queryTable.load().then(() => {
+            //         return queryTable.queryFeatures({
+            //             where: whereClause,
+            //             outFields: ["*"],
+            //             returnGeometry: false
+            //         });
+            //     }).then(function(results) {
+            //         console.log("Query results:", {
+            //             originId: clickedBGId,
+            //             featuresFound: results.features.length
+            //         });
+                    
+            //         if (!results.features.length) {
+            //             console.log("No destinations found for origin:", clickedBGId);
+            //             return;
+            //         }
+                    
+            //         // Aggregate results by destination, summing across time periods AND days if needed
+            //         const aggregatedTrips = {};
+            //         results.features.forEach(f => {
+            //             const destId = f.attributes.Destination_Zone_ID.toString();
+            //             const trips = parseInt(f.attributes[selectedPurpose]);
+                        
+            //             aggregatedTrips[destId] = (aggregatedTrips[destId] || 0) + trips;
+            //             aggregatedTrips[destId] = averagingDays ? Math.round(aggregatedTrips[destId] / 5) : aggregatedTrips[destId];
+
+            //         });
+                    
+            //         // Store aggregated results
+            //         tripData[clickedBGId] = {};
+            //         Object.entries(aggregatedTrips).forEach(([destId, trips]) => {
+            //             tripData[clickedBGId][destId] = trips;
+            //         });
+                    
+            //         console.log("Results summary (All Times):", {
+            //             originId: clickedBGId,
+            //             totalDestinations: Object.keys(aggregatedTrips).length,
+            //             totalTrips: Object.values(aggregatedTrips).reduce((sum, trips) => sum + trips, 0)
+            //         });
+                    
+            //         updateDisplay();
+            //     }).catch(error => {
+            //         console.error("Error querying all time periods:", error);
+            //     });
+            // } else {
+            //     // For specific time periods
+                
+            //     // Special handling for "All Days" option
+            //     let whereClause;
+            //     let averagingDays;
+            //     if (selectedDay === "Proposed") {
+            //         whereClause = `Origin_Zone_ID = '${clickedBGId}' AND Day_Type IN ('1: Monday (M-M)', '2: Tuesday (Tu-Tu)', '3: Wednesday (W-W)', '4: Thursday (Th-Th)', '5: Friday (F-F)') AND Day_Part = '${selectedTime}'`;
+            //         averagingDays = true;
+            //     } else {
+            //         whereClause = `Origin_Zone_ID = '${clickedBGId}' AND Day_Type = '${selectedDay}' AND Day_Part = '${selectedTime}'`;
+            //         averagingDays = false;
+            //     }
+                
+            //     console.log("Query for specific time:", whereClause);
+                
+            //     const query = {
+            //         where: whereClause,
+            //         outFields: ["*"],
+            //         returnGeometry: false
+            //     };
+                
+            //     // Log the query details
+            //     console.log("Query:", {
+            //         url: tableUrl,
+            //         where: whereClause,
+            //         day: selectedDay,
+            //         time: selectedTime
+            //     });
+                
+            //     // Execute query
+            //     queryTable.load().then(() => {
+            //         return queryTable.queryFeatures(query);
+            //     }).then(function(results) {
+            //         console.log("Query results:", {
+            //             originId: clickedBGId,
+            //             featuresFound: results.features.length
+            //         });
+                    
+            //         if (!results.features.length) {
+            //             console.log("No destinations found for origin:", clickedBGId);
+            //             return;
+            //         }
+                    
+            //         // Aggregate results by destination
+            //         const aggregatedTrips = {};
+            //         results.features.forEach(f => {
+            //             const destId = f.attributes.Destination_Zone_ID.toString();
+            //             const trips = parseInt(f.attributes[selectedPurpose]);
+                        
+            //             aggregatedTrips[destId] = (aggregatedTrips[destId] || 0) + trips;
+            //             aggregatedTrips[destId] = averagingDays ? Math.round(aggregatedTrips[destId] / 5) : aggregatedTrips[destId];
+
+            //         });
+                    
+            //         // Store aggregated results
+            //         tripData[clickedBGId] = {};
+            //         Object.entries(aggregatedTrips).forEach(([destId, trips]) => {
+            //             tripData[clickedBGId][destId] = trips;
+            //         });
+                    
+            //         console.log("Results summary:", {
+            //             originId: clickedBGId,
+            //             totalDestinations: Object.keys(aggregatedTrips).length,
+            //             totalTrips: Object.values(aggregatedTrips).reduce((sum, trips) => sum + trips, 0)
+            //         });
+                    
+            //         updateDisplay();
+            //     }).catch(error => {
+            //         console.error("Error querying data:", error);
+            //     });
+            // }
         }).catch(error => {
             console.error("Error in hitTest:", error);
         });
@@ -477,31 +562,6 @@ require([
                 });
             });
 
-            const quantiles = calculateQuantiles(Object.values(combinedTrips).sort((a,b) => a - b));
-            const tripRenderer = new ClassBreaksRenderer({
-                defaultSymbol: {
-                    type: "simple-fill",
-                    color: [180, 230, 180, 0.6], // green for no trips
-                    outline: { color: [0, 128, 0], width: 1 }
-                },
-                defaultLabel: "0 trip",
-                classBreakInfos: quantiles.map((quantile, index) => {
-                    const color = getColorForIndex(index); // Define colors based on quantile index
-                    return {
-                        minValue: quantile[0],
-                        maxValue: quantile[1],
-                        symbol: {
-                            type: "simple-fill",
-                            color: color,
-                            outline: { color: [0, 128, 0], width: 1 }
-                        },
-                        label: `${quantile[0]} - ${quantile[1]} trips`
-                    };
-                })
-            });
-
-            beaverCountyBG.renderer = tripRenderer;
-
             // Update side panel content
             updateSidePanel(originResults.features, combinedTrips);
 
@@ -518,7 +578,8 @@ require([
                 destResults.features.forEach(function(f) {
                     const destId = f.attributes.GEOID;
                     const tripCount = combinedTrips[destId] || 0;
-                    const color = getColorFromRenderer(tripRenderer, tripCount);
+                    const color = getColorFromRenderer(tripCount);
+                    
                     // Only add fill color, no border
                     view.graphics.add({
                         geometry: f.geometry,
@@ -670,4 +731,11 @@ require([
 
     // Initialize side panel
     createSidePanel();
+
+    function getColorFromRenderer(tripCount) {
+        const breakInfo = tripsRenderer.classBreakInfos.find(info => 
+            tripCount >= info.minValue && tripCount <= info.maxValue
+        );
+        return breakInfo ? breakInfo.symbol.color : [0, 0, 0, 0];
+    }
 });
