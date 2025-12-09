@@ -538,8 +538,8 @@ require([
         sidePanel.id = "sidePanel";
         sidePanel.style.cssText = `
             position: absolute;
-            top: 15px;
-            left: 52px;
+            top: 128px;
+            left: 63px;
             background: white;
             padding: 15px;
             border-radius: 3px;

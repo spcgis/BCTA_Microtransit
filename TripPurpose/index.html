@@ -5,7 +5,7 @@
     <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
     <title>Beaver County Transit Trip Purpose</title>
     <link rel="stylesheet" href="https://js.arcgis.com/4.32/esri/themes/light/main.css">
-    <link rel="stylesheet" href="./styles.css">
+    <link rel="stylesheet" href="./assets/styles.css">
     <script src="https://js.arcgis.com/4.32/"></script>
 </head>
 <body>
@@ -14,18 +14,18 @@
         <div class = "header-container">
             <!-- Left block: Header content -->
             <div class = "main-header">
-                <h2 style="color:white; font-family:Helvetica;">Origin-Destination Trip Counts by Day and Time</h2>
-                <p style="color:white; margin:0px; font-family:Arial;"><em>Data Source:</em> Streetlight Insight, O-D Traveler Attributes, All Vehicles LBS+, Analysis timeframe 1/21-12/21</p>
+                <h2 style="color:white; font-family:Helvetica; margin-left:15px;margin-bottom:0px;">Origin-Destination Trip Counts by Day and Time</h2>
+                <p style="color:white; margin-left:15px; font-family:Arial; font-size:small;"><em>Data Source:</em> Streetlight Insight, O-D Traveler Attributes, All Vehicles LBS+, Analysis timeframe 1/21-12/21</p>
             </div>
             <!-- Right block: Logos -->
             <div class = "logos">
-                <!--img src="https://www.spcregion.org/wp-content/themes/spc/assets/images/spc-logo.svg" class="SPC-logo" /-->
-                <img src="https://www.spcregion.org/wp-content/uploads/2022/03/PD10064_RDC-Logo_RGB.svg" class="Dept-logo"/>
+                <!--img src="https://www.spcregion.org/wp-content/themes/spc/assets/images/spc-logo.svg" class="BCTA-logo" /-->
+                <img src="./assets/SPC_Wht.png" style="height: clamp(70px, 75px, 85px); width: auto; margin-right:5px;"/>
             </div>
         </div>
         <!-- Lower block: the Map -->
         <div id="viewDiv"></div>
     </div>
-    <script src="app.js"></script>
+    <script src="./assets/app.js"></script>
 </body>
 </html>

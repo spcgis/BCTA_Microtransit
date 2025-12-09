@@ -13,13 +13,11 @@ body, html {
 }
 
 #filterContainer select {
-    margin: 5px 0;
-    padding: 5px;
-    width: 200px;
+    width: 100%;
 }
 
 #filterContainer {
-    width: 250px;
+    width: 200px;
 }
 
 #sidePanel {
@@ -48,7 +46,7 @@ body, html {
     display: flex;
     flex-direction: row-reverse;
     flex-wrap: wrap;
-    align-content: flex-start;
+    align-content: center;
     justify-content: flex-start;
     align-items: center;
     width: 45%;
@@ -59,14 +57,6 @@ body, html {
     display: flex;
     gap: 20px;
     flex-wrap: wrap
-}
-.SPC-logo {
-    height: clamp(50px, 95px, 150px);
-    width: auto
-}
-.Dept-logo {
-    height: clamp(50px, 65px, 90px);
-    width: auto; 
 }
 
 /* Media query to hide .logos on small screens */
