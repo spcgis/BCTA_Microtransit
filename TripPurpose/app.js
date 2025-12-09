@@ -337,6 +337,14 @@ require([
 
             // If not selected, add it
             selectedOrigins.add(clickedBGId);
+
+            // Add renderer
+            if (!selectedOrigins) {
+                tripRenderer = generateRenderer([5, 10, 25, 50]);
+                beaverCountyBG.renderer = tripRenderer;
+            } else {
+                beaverCountyBG.renderer = initialRenderer;
+            }
             
             // Use the appropriate table URL
             const tableUrl = getODTableURL();
@@ -412,14 +420,6 @@ require([
                     totalTrips: Object.values(aggregatedTrips).reduce((sum, trips) => sum + trips, 0)
                 });
 
-                // Add renderer
-                if (!selectedOrigins) {
-                    tripRenderer = generateRenderer([5, 10, 25, 50]);
-                    beaverCountyBG.renderer = tripRenderer;
-                } else {
-                    beaverCountyBG.renderer = initialRenderer;
-                }
-                
                 updateDisplay();
             }).catch(error => {
                 console.error("Error querying all time periods:", error);
