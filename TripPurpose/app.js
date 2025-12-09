@@ -288,6 +288,7 @@ require([
 
     function calculateQuantiles(sortedData, numClasses = 5) {
         const quantileSize = Math.floor(sortedData.length / numClasses);
+        console.log(quantileSize);
         const quantiles = [];
 
         for (let i = 0; i < numClasses; i++) {
@@ -496,7 +497,9 @@ require([
                 }
                 else if (tripCounts.length > 0) {
                     tripCounts.sort((a,b) => a - b);
+                    console.log(tripCounts);
                     quantiles = calculateQuantiles(tripCounts);
+                    console.log(quantiles);
                     tripRenderer = generateRenderer(quantiles);
                     beaverCountyBG.renderer = tripRenderer;
                 } else {
