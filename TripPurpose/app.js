@@ -107,67 +107,67 @@ require([
     view.ui.add(filterDiv, "top-right");
 
     // Define the class breaks renderer
-    const tripsRenderer = {
-        type: "class-breaks",
-        defaultSymbol: {
-            type: "simple-fill",
-            color: [180, 230, 180, 0.6], // green for no trips
-            outline: { color: [0, 128, 0], width: 1 }
-        },
-        defaultLabel: "0 trip",
-        classBreakInfos: [
-            {
-                minValue: 1,
-                maxValue: 5,
-                symbol: {
-                    type: "simple-fill",
-                    color: [255, 241, 169, 0.7],
-                    outline: { color: [0, 128, 0], width: 1 }
-                },
-                label: "1-5 trips"
-            },
-            {
-                minValue: 6,
-                maxValue: 15,
-                symbol: {
-                    type: "simple-fill",
-                    color: [254, 204, 92, 0.7],
-                    outline: { color: [0, 128, 0], width: 1 }
-                },
-                label: "6-15 trips"
-            },
-            {
-                minValue: 16,
-                maxValue: 25,
-                symbol: {
-                    type: "simple-fill",
-                    color: [253, 141, 60, 0.7],
-                    outline: { color: [0, 128, 0], width: 1 }
-                },
-                label: "16-25 trips"
-            },
-            {
-                minValue: 26,
-                maxValue: 50,
-                symbol: {
-                    type: "simple-fill",
-                    color: [240, 59, 32, 0.7],
-                    outline: { color: [0, 128, 0], width: 1 }
-                },
-                label: "26-50 trips"
-            },
-            {
-                minValue: 51,
-                maxValue: 99999,
-                symbol: {
-                    type: "simple-fill",
-                    color: [189, 0, 38, 0.7],
-                    outline: { color: [0, 128, 0], width: 1 }
-                },
-                label: ">50 trips"
-            }
-        ]
-    };
+    // const tripsRenderer = {
+    //     type: "class-breaks",
+    //     defaultSymbol: {
+    //         type: "simple-fill",
+    //         color: [180, 230, 180, 0.6], // green for no trips
+    //         outline: { color: [0, 128, 0], width: 1 }
+    //     },
+    //     defaultLabel: "0 trip",
+    //     classBreakInfos: [
+    //         {
+    //             minValue: 1,
+    //             maxValue: 5,
+    //             symbol: {
+    //                 type: "simple-fill",
+    //                 color: [255, 241, 169, 0.7],
+    //                 outline: { color: [0, 128, 0], width: 1 }
+    //             },
+    //             label: "1-5 trips"
+    //         },
+    //         {
+    //             minValue: 6,
+    //             maxValue: 15,
+    //             symbol: {
+    //                 type: "simple-fill",
+    //                 color: [254, 204, 92, 0.7],
+    //                 outline: { color: [0, 128, 0], width: 1 }
+    //             },
+    //             label: "6-15 trips"
+    //         },
+    //         {
+    //             minValue: 16,
+    //             maxValue: 25,
+    //             symbol: {
+    //                 type: "simple-fill",
+    //                 color: [253, 141, 60, 0.7],
+    //                 outline: { color: [0, 128, 0], width: 1 }
+    //             },
+    //             label: "16-25 trips"
+    //         },
+    //         {
+    //             minValue: 26,
+    //             maxValue: 50,
+    //             symbol: {
+    //                 type: "simple-fill",
+    //                 color: [240, 59, 32, 0.7],
+    //                 outline: { color: [0, 128, 0], width: 1 }
+    //             },
+    //             label: "26-50 trips"
+    //         },
+    //         {
+    //             minValue: 51,
+    //             maxValue: 99999,
+    //             symbol: {
+    //                 type: "simple-fill",
+    //                 color: [189, 0, 38, 0.7],
+    //                 outline: { color: [0, 128, 0], width: 1 }
+    //             },
+    //             label: ">50 trips"
+    //         }
+    //     ]
+    // };
 
     // Default green renderer for block groups
     const greenRenderer = {
@@ -177,6 +177,16 @@ require([
             color: [180, 230, 180, 0.6], // light green
             outline: { color: [0, 128, 0], width: 1 }
         }
+    };
+
+    const initialRenderer = {
+        type: "simple",
+        symbol: {
+            type: "simple-fill",
+            color: [180, 230, 180, 0.6], // light green
+            outline: { color: [0, 128, 0], width: 1 }
+        },
+        label: "NA - Origin Not Selected"
     };
 
     // Layer for block group outlines (green)
@@ -199,7 +209,7 @@ require([
         outFields: ["*"],
         visible: true,
         opacity: 0.7,
-        renderer: tripsRenderer  // Apply the renderer here
+        renderer: initialRenderer
     });
 
     beaverCountyBG.when(() => {
@@ -233,7 +243,7 @@ require([
         layerInfos: [
             {
                 layer: beaverCountyBG,
-                title: "Number of Trips"
+                title: "Inbound Trips"
             },
             {
                 layer: blockGroupOutlineLayer,
@@ -275,6 +285,100 @@ require([
         console.log("Selected purpose:", selectedPurpose);
         updateLayerFilter();
     });
+
+    function calculateQuantiles(sortedData, numClasses = 5) {
+        const quantileSize = Math.floor(sortedData.length / numClasses);
+        const quantiles = [];
+
+        for (let i = 1; i < numClasses; i++) {
+            let minValue = sortedData[i * quantileSize];
+            let maxValue = (i + 1 === numClasses) ? sortedData[sortedData.length - 1] : sortedData[(i + 1) * quantileSize - 1];
+
+            // Adjust the last maxValue to the real maxValue
+            if (i === numClasses - 1 && maxValue < sortedData[sortedData.length - 1]) {
+                maxValue = Math.round(sortedData[sortedData.length - 1] / 5) *5;
+            }
+
+            // make them multiples of 5
+            minValue = Math.round(minValue / 5) * 5;
+            maxValue = Math.round(maxValue / 5) * 5;
+
+            quantiles.push([minValue, maxValue]);            
+
+        }
+
+        return quantiles;
+    }
+
+    function generateRenderer(quantiles) {
+        return {
+            type: "class-breaks",
+            defaultSymbol: {
+                type: "simple-fill",
+                color: [180, 230, 180, 0.6], // green for no trips
+                outline: { color: [0, 128, 0], width: 1 }
+            },
+            defaultLabel: "0 trip",
+            classBreakInfos: [
+            {
+                minValue: 1,
+                maxValue: quantiles[0],
+                symbol: {
+                    type: "simple-fill",
+                    color: [255, 241, 169, 0.7],
+                    outline: { color: [0, 128, 0], width: 1 }
+                },
+                label: `1-${quantiles[0]} trips`
+            },
+            {
+                minValue: quantiles[0]+1,
+                maxValue: quantiles[1],
+                symbol: {
+                    type: "simple-fill",
+                    color: [254, 204, 92, 0.7],
+                    outline: { color: [0, 128, 0], width: 1 }
+                },
+                label: `${quantiles[0]+1}-${quantiles[1]} trips`
+            },
+            {
+                minValue: quantiles[1]+1,
+                maxValue: quantiles[2],
+                symbol: {
+                    type: "simple-fill",
+                    color: [253, 141, 60, 0.7],
+                    outline: { color: [0, 128, 0], width: 1 }
+                },
+                label: `${quantiles[1]+1}-${quantiles[2]} trips`
+            },
+            {
+                minValue: quantiles[2]+1,
+                maxValue: quantiles[3],
+                symbol: {
+                    type: "simple-fill",
+                    color: [240, 59, 32, 0.7],
+                    outline: { color: [0, 128, 0], width: 1 }
+                },
+                label: `${quantiles[2]+1}-${quantiles[3]} trips`
+            },
+            {
+                minValue: quantiles[3]+1,
+                maxValue: 99999999999,
+                symbol: {
+                    type: "simple-fill",
+                    color: [189, 0, 38, 0.7],
+                    outline: { color: [0, 128, 0], width: 1 }
+                },
+                label: `>${quantiles[3]} trips`
+            }
+        ]};
+    }
+    
+    function getColorFromRenderer(renderer, tripCount) {
+        const breakInfo = renderer.classBreakInfos.find(info => 
+            tripCount >= info.minValue && tripCount <= info.maxValue
+        );
+        return breakInfo ? breakInfo.symbol.color : [0, 0, 0, 0];
+    }
 
     // Update the updateLayerFilter function to also update the legend title
     function updateLayerFilter() {
@@ -394,7 +498,21 @@ require([
                     totalDestinations: Object.keys(aggregatedTrips).length,
                     totalTrips: Object.values(aggregatedTrips).reduce((sum, trips) => sum + trips, 0)
                 });
-                
+
+                // Flatten counts
+                const tripCounts = Object.values(tripData).map(destData => Object.values(destData)).flat();
+                if (tripCounts.reduce((acc, currentValue) => acc + currentValue, 0) < 100) {
+                    tripRenderer = generateRenderer([5, 10, 25, 50]);
+                    beaverCountyBG.renderer = tripRenderer;
+                }
+                else if (tripCounts.length > 0) {
+                    tripCounts.sort((a,b) => a - b);
+                    quantiles = calculateQuantiles(tripCounts);
+                    tripRenderer = generateRenderer(quantiles);
+                    beaverCountyBG.renderer = tripRenderer;
+                } else {
+                    beaverCountyBG.renderer = initialRenderer;
+                }
                 updateDisplay();
             }).catch(error => {
                 console.error("Error querying all time periods:", error);
@@ -443,7 +561,7 @@ require([
                 destResults.features.forEach(function(f) {
                     const destId = f.attributes.GEOID;
                     const tripCount = combinedTrips[destId] || 0;
-                    const color = getColorFromRenderer(tripCount);
+                    const color = getColorFromRenderer(beaverCountyBG.renderer, tripCount);
                     
                     // Only add fill color, no border
                     view.graphics.add({
@@ -596,11 +714,4 @@ require([
 
     // Initialize side panel
     createSidePanel();
-
-    function getColorFromRenderer(tripCount) {
-        const breakInfo = tripsRenderer.classBreakInfos.find(info => 
-            tripCount >= info.minValue && tripCount <= info.maxValue
-        );
-        return breakInfo ? breakInfo.symbol.color : [0, 0, 0, 0];
-    }
 });
