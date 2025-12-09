@@ -287,17 +287,22 @@ require([
     });
 
     function calculateQuantiles(sortedData, numClasses = 5) {
-        const quantileSize = Math.floor(sortedData.length / numClasses);
-        console.log(quantileSize);
-        const quantiles = [];
 
-        for (let i = 0; i < numClasses; i++) {
-            let endValue = (i + 1 === numClasses) ? sortedData[sortedData.length - 1] : sortedData[(i + 1) * quantileSize - 1];
-            endValue = Math.round(endValue / 5) * 5;
-            quantiles.push(endValue);            
+        // Handle spare data
+        const nonZeroData = sortedData.filter(val => val !== 0);
+        if (nonZeroData.length < numClasses) {
+            return [5, 10, 25, 50];
+        } else {
+            const quantileSize = Math.floor(nonZeroData.length / numClasses);
+            const quantiles = [];
+
+            for (let i = 0; i < numClasses; i++) {
+                let endValue = (i + 1 === numClasses) ? nonZeroData[nonZeroData.length - 1] : nonZeroData[(i + 1) * quantileSize - 1];
+                endValue = Math.round(endValue / 5) * 5;
+                quantiles.push(endValue);            
+            }
+            return quantiles;
         }
-
-        return quantiles;
     }
 
     function generateRenderer(quantiles) {
@@ -491,7 +496,7 @@ require([
 
                 // Flatten counts
                 const tripCounts = Object.values(tripData).map(destData => Object.values(destData)).flat();
-                if (tripCounts.reduce((acc, currentValue) => acc + currentValue, 0) < 100) {
+                if (tripCounts.reduce((acc, currentValue) => acc + currentValue, 0) < 150) {
                     tripRenderer = generateRenderer([5, 10, 25, 50]);
                     beaverCountyBG.renderer = tripRenderer;
                 }
