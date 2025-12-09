@@ -6,12 +6,28 @@
     <title>Beaver County Transit Trip Purpose</title>
     <link rel="stylesheet" href="https://js.arcgis.com/4.32/esri/themes/light/main.css">
     <script src="https://js.arcgis.com/4.32/"></script>
-    <style>
+    <!-- <style>
         html, body, #viewDiv { padding: 0; margin: 0; height: 100%; width: 100%; }
-    </style>
+    </style> -->
 </head>
 <body>
-    <div id="viewDiv"></div>
+    <div class = "container">
+    <!-- Upper block: Container of GUI -->
+        <div class = "header-container">
+            <!-- Left block: Header content -->
+            <div class = "main-header">
+                <h2 style="color:white; font-family:Helvetica;">Origin-Destination Trip Counts by Day and Time</h2>
+                <p style="color:white; margin:0px; font-family:Arial;"><em>Data Source:</em> Streetlight Insight, O-D Traveler Attributes, All Vehicles LBS+, Analysis timeframe 1/21-12/21</p>
+            </div>
+            <!-- Right block: Logos -->
+            <div class = "logos">
+                <!--img src="https://www.spcregion.org/wp-content/themes/spc/assets/images/spc-logo.svg" class="SPC-logo" /-->
+                <img src="https://www.spcregion.org/wp-content/uploads/2022/03/PD10064_RDC-Logo_RGB.svg" class="Dept-logo"/>
+            </div>
+        </div>
+        <!-- Lower block: the Map -->
+        <div id="viewDiv"></div>
+    </div>
     <script src="app.js"></script>
 </body>
 </html>
