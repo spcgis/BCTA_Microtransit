@@ -413,12 +413,13 @@ require([
                 });
 
                 // Add renderer
-                if (tripData.length > 0) {
+                if (!selectedOrigins) {
                     tripRenderer = generateRenderer([5, 10, 25, 50]);
                     beaverCountyBG.renderer = tripRenderer;
                 } else {
                     beaverCountyBG.renderer = initialRenderer;
                 }
+                
                 updateDisplay();
             }).catch(error => {
                 console.error("Error querying all time periods:", error);
