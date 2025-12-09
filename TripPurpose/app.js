@@ -21,9 +21,9 @@ require([
     // Initialize state variables
     let selectedOrigins = new Set();
     let tripData = {};
-    let selectedDay = "0: All Days (M-Su)";
-    let selectedTime = "ALL";
-    let selectedPurpose = "Home_to_Work";
+    let selectedDay = "Proposed";
+    let selectedTime = "Proposed";
+    let selectedPurpose = "All_Purposes";
 
     // Create tooltip
     const tooltip = document.createElement("div");
@@ -62,6 +62,7 @@ require([
     <div style="margin-bottom: 10px;">
         <label for="purposeSelect">Trip Purpose:</label>
         <select id="purposeSelect" style="border: 1px solid #ccc">
+            <option value="All_Purposes">All Purposes</option>
             <option value="Home_to_Work">Home to Work</option>
             <option value="Home_to_Other">Home to Other</option>
             <option value="Non_Home_Based_Trip">Non Home Based</option>
@@ -70,6 +71,7 @@ require([
     <div style="margin-bottom: 10px;">
         <label for="daySelect">Day of Week:</label>
         <select id="daySelect" style="border: 1px solid #ccc">
+            <option value="Proposed">Proposed Microtransit Service Days (M-F)</option>
             <option value="0: All Days (M-Su)">All (Mon-Sat)</option>
             <option value="1: Monday (M-M)">Monday</option>
             <option value="2: Tuesday (Tu-Tu)">Tuesday</option>
@@ -83,6 +85,7 @@ require([
     <div>
         <label for="timeSelect">Time Period:</label>
         <select id="timeSelect" style="border: 1px solid #ccc">
+            <option value="Proposed">Proposed Microtransit Service Times (6am–8pm)</option>
             <option value="ALL">All Times (6am-11pm)</option>
             <option value="01: 6am (6am-7am)">6am-7am</option>
             <option value="02: 7am (7am-8am)">7am-8am</option>
@@ -98,7 +101,6 @@ require([
             <option value="12: 5pm (5pm-6pm)">5pm-6pm</option>
             <option value="13: 6pm (6pm-7pm)">6pm-7pm</option>
             <option value="14: 7pm (7pm-8pm)">7pm-8pm</option>
-            <option value="15: 8pm (8pm-9pm)">8pm-9pm</option>
         </select>
     </div>
     `;
@@ -208,7 +210,9 @@ require([
 
     // Modify the getODTableURL function to use different layers based on mode
     function getODTableURL() {
-        if (selectedPurpose === "Home_to_Work") {
+        if (selectedPurpose === "All_Purposes") {
+            return ""
+        } else if (selectedPurpose === "Home_to_Work") {
             // Home to Work Trips
             return "https://services3.arcgis.com/MV5wh5WkCMqlwISp/ArcGIS/rest/services/BCTA_Trip_Purpose/FeatureServer/1";
         } else if (selectedPurpose === "Home_to_Other") {
@@ -219,21 +223,6 @@ require([
             return "https://services3.arcgis.com/MV5wh5WkCMqlwISp/ArcGIS/rest/services/BCTA_Trip_Purpose/FeatureServer/3";
         }
     }
-    
-    // Modify the OD table setup
-    // let odTable = new FeatureLayer({
-    //     url: getODTableURL(),
-    //     id: "OD_Table",
-    //     outFields: ["*"],
-    //     visible: false,
-    //     definitionExpression: "1=1"
-    // });
-
-    // odTable.when(() => {
-    //     console.log("OD Table fields:", 
-    //         odTable.fields.map(f => ({name: f.name, type: f.type}))
-    //     );
-    // });
 
     map.add(beaverCountyBG);
 
@@ -289,47 +278,6 @@ require([
 
     // Update the updateLayerFilter function to also update the legend title
     function updateLayerFilter() {
-        // // Create new FeatureLayer instance based on selected mode
-        // odTable = new FeatureLayer({
-        //     url: getODTableURL(),
-        //     id: "OD_Table",
-        //     outFields: ["*"],
-        //     visible: false
-        // });
-
-        // // Special handling for "All Days" option
-        // let whereClause;
-        // if (selectedDay === "0: All Days (M-Su)") {
-        //     // Include all weekdays (1-6) as there's no pre-aggregated data
-        //     whereClause = "Day_Type IN ('1: Monday (M-M)', '2: Tuesday (Tu-Tu)', '3: Wednesday (W-W)', '4: Thursday (Th-Th)', '5: Friday (F-F)', '6: Saturday (Sa-Sa)', '7: Sunday (Su-Su)')";
-        // } else {
-        //     // For specific days, use the selected day
-        //     whereClause = `Day_Type = '${selectedDay}'`;
-        // }
-        
-        // // Apply time filter only if not "ALL"
-        // if (selectedTime && selectedTime !== "ALL") {
-        //     whereClause += ` AND Day_Part = '${selectedTime}'`;
-        // }
-
-        // odTable.definitionExpression = whereClause;
-
-        // // Wait for layer to load before querying
-        // odTable.load().then(() => {
-        //     odTable.queryFeatureCount({
-        //         where: whereClause
-        //     }).then(count => {
-        //         console.log(`Found ${count} records in table for day ${selectedDay}${selectedTime ? `, time ${selectedTime === 'ALL' ? 'All Times' : selectedTime}` : ''}`);
-        //     });
-        // }).catch(error => {
-        //     console.error("Error loading OD table:", error);
-        // });
-
-        // // Update legend title
-        // const modeText = selectedPurpose.replaceAll("_", " ").replace("Trip","");
-        // if (legendExpand && legendExpand.content) {
-        //     legendExpand.content.layerInfos[0].title = `Number of ${modeText} Trips`;
-        // }
 
         // Clear existing selections
         selectedOrigins.clear();
@@ -382,137 +330,210 @@ require([
                 outFields: ["*"],
                 visible: false
             });
-            
-            // Execute the appropriate query based on time and day selections
-            if (selectedTime === "ALL") {
-                // For "All Times" we need to query and sum ALL time periods
-                
-                // Special handling for "All Days" option
-                let whereClause;
-                if (selectedDay === "0: All Days (M-Su)") {
-                    // Include all weekdays (1-6) as there's no pre-aggregated data
-                    whereClause = `Origin_Zone_ID = '${clickedBGId}' AND Day_Type IN ('1: Monday (M-M)', '2: Tuesday (Tu-Tu)', '3: Wednesday (W-W)', '4: Thursday (Th-Th)', '5: Friday (F-F)', '6: Saturday (Sa-Sa)', '7: Sunday (Su-Su)')`;
-                } else {
-                    // For specific days, use the selected day
-                    whereClause = `Origin_Zone_ID = '${clickedBGId}' AND Day_Type = '${selectedDay}'`;
-                }
-                
-                console.log("Query for ALL times:", whereClause);
-                
-                queryTable.load().then(() => {
-                    return queryTable.queryFeatures({
-                        where: whereClause,
-                        outFields: ["*"],
-                        returnGeometry: false
-                    });
-                }).then(function(results) {
-                    console.log("Query results:", {
-                        originId: clickedBGId,
-                        featuresFound: results.features.length
-                    });
-                    
-                    if (!results.features.length) {
-                        console.log("No destinations found for origin:", clickedBGId);
-                        return;
-                    }
-                    
-                    // Aggregate results by destination, summing across time periods AND days if needed
-                    const aggregatedTrips = {};
-                    results.features.forEach(f => {
-                        const destId = f.attributes.Destination_Zone_ID.toString();
-                        const trips = parseInt(f.attributes[selectedPurpose]);
-                        
-                        // If the day is "All Days", we should divide by the number of days
-                        // to get a daily average (only if the original data represents totals)
-                        // Otherwise, just sum as normal
-                        aggregatedTrips[destId] = (aggregatedTrips[destId] || 0) + trips;
-                    });
-                    
-                    // Store aggregated results
-                    tripData[clickedBGId] = {};
-                    Object.entries(aggregatedTrips).forEach(([destId, trips]) => {
-                        tripData[clickedBGId][destId] = trips;
-                    });
-                    
-                    console.log("Results summary (All Times):", {
-                        originId: clickedBGId,
-                        totalDestinations: Object.keys(aggregatedTrips).length,
-                        totalTrips: Object.values(aggregatedTrips).reduce((sum, trips) => sum + trips, 0)
-                    });
-                    
-                    updateDisplay();
-                }).catch(error => {
-                    console.error("Error querying all time periods:", error);
-                });
+
+            let addDayPart;
+            let addDayType;
+            let averagingDay;
+
+            // Handling for selected day
+            if (selectedDay === "Proposed") {
+                addDayType = `AND Day_Type IN ('1: Monday (M-M)', '2: Tuesday (Tu-Tu)', '3: Wednesday (W-W)', '4: Thursday (Th-Th)', '5: Friday (F-F)')`
+                averagingDay = true;
             } else {
-                // For specific time periods
-                
-                // Special handling for "All Days" option
-                let whereClause;
-                if (selectedDay === "0: All Days (M-Su)") {
-                    // Include all weekdays (1-6) as there's no pre-aggregated data
-                    whereClause = `Origin_Zone_ID = '${clickedBGId}' AND Day_Type IN ('1: Monday (M-M)', '2: Tuesday (Tu-Tu)', '3: Wednesday (W-W)', '4: Thursday (Th-Th)', '5: Friday (F-F)', '6: Saturday (Sa-Sa)', '7: Sunday (Su-Su)') AND Day_Part = '${selectedTime}'`;
-                } else {
-                    // For specific days, use the selected day
-                    whereClause = `Origin_Zone_ID = '${clickedBGId}' AND Day_Type = '${selectedDay}' AND Day_Part = '${selectedTime}'`;
-                }
-                
-                console.log("Query for specific time:", whereClause);
-                
-                const query = {
+                addDayType =  ` AND Day_Type = '${selectedDay}'`
+                averagingDay = false;
+            }
+            
+            // Handling for selected time
+            if (selectedTime === "Proposed") {
+                addDayPart = ``
+            } else {
+                addDayPart = `AND Day_Part = '${selectedTime}'`
+            }
+            
+            // Generate query
+            whereclause = `Origin_Zone_ID = '${clickedBGId}' ${addDayType} ${addDayPart}`;
+            console.log("Query for ALL times:", whereClause);
+            
+            queryTable.load().then(() => {
+                return queryTable.queryFeatures({
                     where: whereClause,
                     outFields: ["*"],
                     returnGeometry: false
-                };
-                
-                // Log the query details
-                console.log("Query:", {
-                    url: tableUrl,
-                    where: whereClause,
-                    day: selectedDay,
-                    time: selectedTime
+                });
+            }).then(function(results) {
+                console.log("Query results:", {
+                    originId: clickedBGId,
+                    featuresFound: results.features.length
                 });
                 
-                // Execute query
-                queryTable.load().then(() => {
-                    return queryTable.queryFeatures(query);
-                }).then(function(results) {
-                    console.log("Query results:", {
-                        originId: clickedBGId,
-                        featuresFound: results.features.length
-                    });
+                if (!results.features.length) {
+                    console.log("No destinations found for origin:", clickedBGId);
+                    return;
+                }
+                
+                // Aggregate results by destination, summing across time periods AND days then divide by 5 if needed
+                const aggregatedTrips = {};
+                results.features.forEach(f => {
+                    const destId = f.attributes.Destination_Zone_ID.toString();
+                    const trips = parseInt(f.attributes[selectedPurpose]);
                     
-                    if (!results.features.length) {
-                        console.log("No destinations found for origin:", clickedBGId);
-                        return;
-                    }
+                    aggregatedTrips[destId] = (aggregatedTrips[destId] || 0) + trips;                    
+                    aggregatedTrips[destId] = averagingDay ? Math.round(aggregatedTrips[destId] / 5) : aggregatedTrips[destId];
+
+                });
+                
+                // Store aggregated results
+                tripData[clickedBGId] = {};
+                Object.entries(aggregatedTrips).forEach(([destId, trips]) => {
+                    tripData[clickedBGId][destId] = trips;
+                });
+                
+                console.log("Results summary (All Times):", {
+                    originId: clickedBGId,
+                    totalDestinations: Object.keys(aggregatedTrips).length,
+                    totalTrips: Object.values(aggregatedTrips).reduce((sum, trips) => sum + trips, 0)
+                });
+                
+                updateDisplay();
+            }).catch(error => {
+                console.error("Error querying all time periods:", error);
+            });
+
+            
+            // // Execute the appropriate query based on time and day selections
+            // if (selectedTime === "Proposed") {
+            //     // Special handling for "Proposed" option
+            //     let whereClause;                
+            //     let averagingDays;
+            //     if (selectedDay === "Proposed") {
+            //         // Include all weekdays (1-6) as there's no pre-aggregated data
+            //         whereClause = `Origin_Zone_ID = '${clickedBGId}' AND Day_Type IN ('1: Monday (M-M)', '2: Tuesday (Tu-Tu)', '3: Wednesday (W-W)', '4: Thursday (Th-Th)', '5: Friday (F-F)')`;
+            //         averagingDays = true;
+            //     } else {
+            //         // For specific days, use the selected day
+            //         whereClause = `Origin_Zone_ID = '${clickedBGId}' AND Day_Type = '${selectedDay}'`;
+            //         averagingDays = false;
+            //     }
+                
+            //     console.log("Query for ALL times:", whereClause);
+                
+            //     queryTable.load().then(() => {
+            //         return queryTable.queryFeatures({
+            //             where: whereClause,
+            //             outFields: ["*"],
+            //             returnGeometry: false
+            //         });
+            //     }).then(function(results) {
+            //         console.log("Query results:", {
+            //             originId: clickedBGId,
+            //             featuresFound: results.features.length
+            //         });
                     
-                    // Aggregate results by destination
-                    const aggregatedTrips = {};
-                    results.features.forEach(f => {
-                        const destId = f.attributes.Destination_Zone_ID.toString();
-                        const trips = parseInt(f.attributes[selectedPurpose]);
+            //         if (!results.features.length) {
+            //             console.log("No destinations found for origin:", clickedBGId);
+            //             return;
+            //         }
+                    
+            //         // Aggregate results by destination, summing across time periods AND days if needed
+            //         const aggregatedTrips = {};
+            //         results.features.forEach(f => {
+            //             const destId = f.attributes.Destination_Zone_ID.toString();
+            //             const trips = parseInt(f.attributes[selectedPurpose]);
                         
-                        aggregatedTrips[destId] = (aggregatedTrips[destId] || 0) + trips;
-                    });
+            //             aggregatedTrips[destId] = (aggregatedTrips[destId] || 0) + trips;
+            //             aggregatedTrips[destId] = averagingDays ? Math.round(aggregatedTrips[destId] / 5) : aggregatedTrips[destId];
+
+            //         });
                     
-                    // Store aggregated results
-                    tripData[clickedBGId] = {};
-                    Object.entries(aggregatedTrips).forEach(([destId, trips]) => {
-                        tripData[clickedBGId][destId] = trips;
-                    });
+            //         // Store aggregated results
+            //         tripData[clickedBGId] = {};
+            //         Object.entries(aggregatedTrips).forEach(([destId, trips]) => {
+            //             tripData[clickedBGId][destId] = trips;
+            //         });
                     
-                    console.log("Results summary:", {
-                        originId: clickedBGId,
-                        totalDestinations: Object.keys(aggregatedTrips).length,
-                        totalTrips: Object.values(aggregatedTrips).reduce((sum, trips) => sum + trips, 0)
-                    });
+            //         console.log("Results summary (All Times):", {
+            //             originId: clickedBGId,
+            //             totalDestinations: Object.keys(aggregatedTrips).length,
+            //             totalTrips: Object.values(aggregatedTrips).reduce((sum, trips) => sum + trips, 0)
+            //         });
                     
-                    updateDisplay();
-                }).catch(error => {
-                    console.error("Error querying data:", error);
-                });
-            }
+            //         updateDisplay();
+            //     }).catch(error => {
+            //         console.error("Error querying all time periods:", error);
+            //     });
+            // } else {
+            //     // For specific time periods
+                
+            //     // Special handling for "All Days" option
+            //     let whereClause;
+            //     let averagingDays;
+            //     if (selectedDay === "Proposed") {
+            //         whereClause = `Origin_Zone_ID = '${clickedBGId}' AND Day_Type IN ('1: Monday (M-M)', '2: Tuesday (Tu-Tu)', '3: Wednesday (W-W)', '4: Thursday (Th-Th)', '5: Friday (F-F)') AND Day_Part = '${selectedTime}'`;
+            //         averagingDays = true;
+            //     } else {
+            //         whereClause = `Origin_Zone_ID = '${clickedBGId}' AND Day_Type = '${selectedDay}' AND Day_Part = '${selectedTime}'`;
+            //         averagingDays = false;
+            //     }
+                
+            //     console.log("Query for specific time:", whereClause);
+                
+            //     const query = {
+            //         where: whereClause,
+            //         outFields: ["*"],
+            //         returnGeometry: false
+            //     };
+                
+            //     // Log the query details
+            //     console.log("Query:", {
+            //         url: tableUrl,
+            //         where: whereClause,
+            //         day: selectedDay,
+            //         time: selectedTime
+            //     });
+                
+            //     // Execute query
+            //     queryTable.load().then(() => {
+            //         return queryTable.queryFeatures(query);
+            //     }).then(function(results) {
+            //         console.log("Query results:", {
+            //             originId: clickedBGId,
+            //             featuresFound: results.features.length
+            //         });
+                    
+            //         if (!results.features.length) {
+            //             console.log("No destinations found for origin:", clickedBGId);
+            //             return;
+            //         }
+                    
+            //         // Aggregate results by destination
+            //         const aggregatedTrips = {};
+            //         results.features.forEach(f => {
+            //             const destId = f.attributes.Destination_Zone_ID.toString();
+            //             const trips = parseInt(f.attributes[selectedPurpose]);
+                        
+            //             aggregatedTrips[destId] = (aggregatedTrips[destId] || 0) + trips;
+            //             aggregatedTrips[destId] = averagingDays ? Math.round(aggregatedTrips[destId] / 5) : aggregatedTrips[destId];
+
+            //         });
+                    
+            //         // Store aggregated results
+            //         tripData[clickedBGId] = {};
+            //         Object.entries(aggregatedTrips).forEach(([destId, trips]) => {
+            //             tripData[clickedBGId][destId] = trips;
+            //         });
+                    
+            //         console.log("Results summary:", {
+            //             originId: clickedBGId,
+            //             totalDestinations: Object.keys(aggregatedTrips).length,
+            //             totalTrips: Object.values(aggregatedTrips).reduce((sum, trips) => sum + trips, 0)
+            //         });
+                    
+            //         updateDisplay();
+            //     }).catch(error => {
+            //         console.error("Error querying data:", error);
+            //     });
+            // }
         }).catch(error => {
             console.error("Error in hitTest:", error);
         });
