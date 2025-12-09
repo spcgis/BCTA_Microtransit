@@ -60,7 +60,7 @@ require([
     // Update filterDiv innerHTML to include the mode selection dropdown
     filterDiv.innerHTML = `
     <div style="margin-bottom: 10px;">
-        <label for="purposeSelect">Trip Purpose:</label>
+        <label for="purposeSelect">Trip Purpose:</label><br/>
         <select id="purposeSelect" style="border: 1px solid #ccc">
             <option value="All_Purposes">All Purposes</option>
             <option value="Home_to_Work">Home to Work</option>
@@ -352,7 +352,7 @@ require([
             }
             
             // Generate query
-            whereclause = `Origin_Zone_ID = '${clickedBGId}' ${addDayType} ${addDayPart}`;
+            whereClause = `Origin_Zone_ID = '${clickedBGId}' ${addDayType} ${addDayPart}`;
             console.log("Query for ALL times:", whereClause);
             
             queryTable.load().then(() => {
