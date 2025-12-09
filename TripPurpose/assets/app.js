@@ -48,7 +48,6 @@ require([
     filterDiv.id = "filterContainer";
     filterDiv.style.cssText = `
         position: absolute;
-        top: 15px;
         right: 20px;
         background: white;
         padding: 10px;
@@ -540,8 +539,7 @@ require([
         sidePanel.id = "sidePanel";
         sidePanel.style.cssText = `
             position: absolute;
-            top: 15px;
-            left: 20px;
+            left: 35px;
             background: white;
             padding: 15px;
             border-radius: 3px;
