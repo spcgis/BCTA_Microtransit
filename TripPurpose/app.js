@@ -48,7 +48,7 @@ require([
     filterDiv.id = "filterContainer";
     filterDiv.style.cssText = `
         position: absolute;
-        top: 20px;
+        top: 15px;
         right: 20px;
         background: white;
         padding: 10px;
@@ -511,8 +511,8 @@ require([
                 <button onclick="this.parentElement.parentElement.style.display='none'" 
                         style="border: none; background: none; cursor: pointer;">✕</button>
             </div>
-            <h3>Selected Block Groups</h3>
-            <p><em>${modeTitle} Trips</em></p>
+            <h3 style="margin-block-start:0px; margin-block-end:0px;">Selected Block Groups</h3>
+            <p style="margin-block-start:0px;"><em>${modeTitle} Trips</em></p>
         `;
 
         originFeatures.forEach(feature => {
@@ -520,9 +520,9 @@ require([
             const totalTrips = Object.values(tripData[bgId] || {}).reduce((sum, trips) => sum + trips, 0);
             
             content += `
-                <div style="margin-bottom: 10px;">
-                    <p><strong>Block Group:</strong> ${bgId}</p>
-                    <p><strong>Total Outbound Trips:</strong> ${totalTrips}</p>
+                <div style="margin-bottom: 2px;">
+                    <p style="margin-block-end:0px;"><strong>Block Group:</strong> ${bgId}</p>
+                    <p style="margin-block-start:0px;"><strong>Total Outbound Trips:</strong> ${totalTrips}</p>
                     <hr>
                 </div>
             `;
@@ -538,15 +538,17 @@ require([
         sidePanel.id = "sidePanel";
         sidePanel.style.cssText = `
             position: absolute;
-            top: 20px;
-            left: 20px;
+            top: 15px;
+            left: 52px;
             background: white;
             padding: 15px;
             border-radius: 3px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            max-width: 300px;
+            width: 270px;
             z-index: 1000;
             display: none;
+            max-height: 400px;
+            overflow-y: auto;
         `;
         document.body.appendChild(sidePanel);
         return sidePanel;
