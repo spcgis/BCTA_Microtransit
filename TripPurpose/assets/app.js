@@ -59,7 +59,6 @@ require([
     // Update filterDiv innerHTML to include the mode selection dropdown
     filterDiv.innerHTML = `
     <div style="margin-bottom: 10px;">
-        <p>Click on a block group to select as origin. Filter trip counts by:</p>
         <label for="purposeSelect">Trip Purpose:</label></br>
         <select id="purposeSelect" style="border: 1px solid #ccc">
             <option value="All_Purposes">All Purposes</option>

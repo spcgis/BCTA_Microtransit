@@ -34,8 +34,16 @@ body, html {
     background-color: #2e55a5
 }
 .main-header{
-    width: 55%; 
+    width: 70%; 
+    color: white;
 }
+.main-header > p {
+    margin-left: 15px;
+}
+.main-header > h2 {
+    margin-left: 15px;
+}
+
 .logos{
     display: flex;
     flex-direction: row-reverse;
@@ -43,10 +51,11 @@ body, html {
     align-content: center;
     justify-content: flex-start;
     align-items: center;
-    width: 45%;
+    width: 29.5%;
     gap: 15px;
-
+    margin-right: .5%;
 }
+
 .controls {
     display: flex;
     gap: 20px;
@@ -57,5 +66,8 @@ body, html {
 @media (max-width: 768px) {
     .logos {
     display: none;
+    }
+    .main-header {
+        width: 100%;
     }
 }
