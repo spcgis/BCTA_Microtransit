@@ -3,7 +3,7 @@ require([
     "esri/views/MapView",
     "esri/layers/FeatureLayer",
     "esri/widgets/Legend",
-    "esri/widgets/Expand"
+    "esri/widgets/Expand",
 ], function(Map, MapView, FeatureLayer, Legend, Expand) {
 
     // Initialize map with neutral basemap
@@ -23,7 +23,8 @@ require([
     let tripData = {};
     let selectedDay = "Proposed";
     let selectedTime = "Proposed";
-    let selectedPurpose = "All_Purposes";
+    let selectedPurpose = "Average_Daily_O_D_Traffic__StL_Volume_";
+    let tripPurposeLabel = "All Purposes";
 
     // Create tooltip
     const tooltip = document.createElement("div");
@@ -61,17 +62,17 @@ require([
     <div style="margin-bottom: 10px;">
         <label for="purposeSelect">Trip Purpose:</label></br>
         <select id="purposeSelect" style="border: 1px solid #ccc">
-            <option value="All_Purposes">All Purposes</option>
-            <option value="Home_to_Work">Home to Work</option>
-            <option value="Home_to_Other">Home to Other</option>
-            <option value="Non_Home_Based_Trip">Non Home Based</option>
+            <option value="Average_Daily_O_D_Traffic__StL_Volume_">All Purposes</option>
+            <option value="HometoWork">Home to Work</option>
+            <option value="HometoOther">Home to Other</option>
+            <option value="NonHomeBasedTrips">Non Home Based</option>
         </select>
     </div>
     <div style="margin-bottom: 10px;">
         <label for="daySelect">Day of Week:</label>
         <select id="daySelect" style="border: 1px solid #ccc">
             <option value="Proposed">Proposed Microtransit Service Days (M-F)</option>
-            <option value="0: All Days (M-Su)">All (Mon-Sat)</option>
+            <option value="0: All Days (M-Su)">All (Mon-Su)</option>
             <option value="1: Monday (M-M)">Monday</option>
             <option value="2: Tuesday (Tu-Tu)">Tuesday</option>
             <option value="3: Wednesday (W-W)">Wednesday</option>
@@ -85,7 +86,7 @@ require([
         <label for="timeSelect">Time Period:</label>
         <select id="timeSelect" style="border: 1px solid #ccc">
             <option value="Proposed">Proposed Microtransit Service Times (6am–8pm)</option>
-            <option value="ALL">All Times (6am-11pm)</option>
+            <option value="00: All Day (12am-12am)">All (12am-12pm)</option>
             <option value="01: 6am (6am-7am)">6am-7am</option>
             <option value="02: 7am (7am-8am)">7am-8am</option>
             <option value="03: 8am (8am-9am)">8am-9am</option>
@@ -155,22 +156,6 @@ require([
         );
     });
 
-    // Modify the getODTableURL function to use different layers based on mode
-    function getODTableURL() {
-        if (selectedPurpose === "All_Purposes") {
-            return ""
-        } else if (selectedPurpose === "Home_to_Work") {
-            // Home to Work Trips
-            return "https://services3.arcgis.com/MV5wh5WkCMqlwISp/ArcGIS/rest/services/BCTA_Trip_Purpose/FeatureServer/1";
-        } else if (selectedPurpose === "Home_to_Other") {
-            // Home to Other Trips
-            return "https://services3.arcgis.com/MV5wh5WkCMqlwISp/ArcGIS/rest/services/BCTA_Trip_Purpose/FeatureServer/2";
-            // Non Home Based Trips
-        } else if (selectedPurpose === "Non_Home_Based_Trip") {
-            return "https://services3.arcgis.com/MV5wh5WkCMqlwISp/ArcGIS/rest/services/BCTA_Trip_Purpose/FeatureServer/3";
-        }
-    }
-
     map.add(beaverCountyBG);
 
     // Update the legend configuration
@@ -211,15 +196,15 @@ require([
         selectedTime = e.target.value;
 
         // Log the selection
-        console.log("Selected time period:", selectedTime === "ALL" ? "All Times" : selectedTime);
-        
+        console.log("Selected time period:", selectedTime === "ALL" ? "All Times" : selectedTime);       
         updateLayerFilter();
     });
 
     // Add event handler for mode selection
     document.getElementById("purposeSelect").addEventListener("change", function(e) {
         selectedPurpose = e.target.value;
-        console.log("Selected purpose:", selectedPurpose);
+        tripPurposeLabel = this.options[this.selectedIndex].text;
+        console.log("Selected purpose:", tripPurposeLabel);
         updateLayerFilter();
     });
 
@@ -285,6 +270,64 @@ require([
             }
         ]};
     }
+
+    // Dynamically generate classbreaks
+    function generateClassBreaks(data, numClasses = 5) {
+        if (!data || data.length === 0) return [5, 10, 25, 50];
+        const n = data.length;
+
+        // Initialize matrices
+        const mat1 = Array.from({ length: n + 1 }, () => Array(numClasses + 1).fill(0));
+        const mat2 = Array.from({ length: n + 1 }, () => Array(numClasses + 1).fill(0));
+
+        for (let i = 1; i <= numClasses; i++) {
+            mat1[0][i] = 1;
+            mat2[0][i] = 0;
+            for (let j = 1; j <= n; j++) {
+                mat2[j][i] = Infinity;
+            }
+        }
+
+        let v = 0;
+        for (let l = 2; l <= n; l++) {
+            let s1 = 0, s2 = 0, w = 0;
+            for (let m = 1; m <= l; m++) {
+                const i3 = l - m + 1;
+                const val = data[i3 - 1];
+
+                s2 += val * val;
+                s1 += val;
+                w++;
+
+                v = s2 - (s1 * s1) / w;
+                const i4 = i3 - 1;
+                if (i4 !== 0) {
+                    for (let j = 2; j <= numClasses; j++) {
+                        if (mat2[l][j] >= (v + mat2[i4][j - 1])) {
+                            mat1[l][j] = i3;
+                            mat2[l][j] = v + mat2[i4][j - 1];
+                        }
+                    }
+                }
+            }
+            mat1[l][1] = 1;
+            mat2[l][1] = v;
+        }
+
+        // Backtrack to find class breaks
+        const breaks = Array(numClasses + 1).fill(0);
+        breaks[numClasses] = data[data.length - 1];
+        let k = n;
+        for (let j = numClasses; j >= 2; j--) {
+            const id = mat1[k][j] - 2;
+            breaks[j - 1] = data[id];
+            k = mat1[k][j] - 1;
+        }
+        breaks[0] = data[0];
+        roundedBreaks = breaks.map(b => Math.round(b / 5) * 5);
+
+        return roundedBreaks.slice(1);
+    }
     
     function getColorFromRenderer(renderer, tripCount) {
         const breakInfo = renderer.classBreakInfos.find(info => 
@@ -295,17 +338,10 @@ require([
 
     // Update the updateLayerFilter function to also update the legend title
     function updateLayerFilter() {
-
-        // Clear existing selections
-        selectedOrigins.clear();
         tripData = {};
-        clickCount = {};
         view.graphics.removeAll();
-
-        // Hide side panel if visible
-        if (document.getElementById("sidePanel")) {
-            document.getElementById("sidePanel").style.display = "none";
-        }
+        // Re-run click logic for each already-selected origin
+        selectedOrigins.forEach(bgId => handleOriginClick(bgId));
     }
 
     // Click handler
@@ -337,97 +373,94 @@ require([
 
             // If not selected, add it
             selectedOrigins.add(clickedBGId);
-
-            // Add renderer
-            if (!selectedOrigins) {
-                beaverCountyBG.renderer = initialRenderer;
-            } else {
-                tripRenderer = generateRenderer([5, 10, 25, 50]);
-                beaverCountyBG.renderer = tripRenderer;
-            }
-            
-            // Use the appropriate table URL
-            const tableUrl = getODTableURL();
-            
-            // Create a new feature layer for the query
-            const queryTable = new FeatureLayer({
-                url: tableUrl,
-                outFields: ["*"],
-                visible: false
-            });
-
-            let addDayPart;
-            let addDayType;
-            let averagingDay;
-
-            // Handling for selected day
-            if (selectedDay === "Proposed") {
-                addDayType = `AND Day_Type IN ('1: Monday (M-M)', '2: Tuesday (Tu-Tu)', '3: Wednesday (W-W)', '4: Thursday (Th-Th)', '5: Friday (F-F)')`
-                averagingDay = true;
-            } else {
-                addDayType =  ` AND Day_Type = '${selectedDay}'`
-                averagingDay = false;
-            }
-            
-            // Handling for selected time
-            if (selectedTime === "Proposed") {
-                addDayPart = ``
-            } else {
-                addDayPart = `AND Day_Part = '${selectedTime}'`
-            }
-            
-            // Generate query
-            const whereClause = `Origin_Zone_ID = '${clickedBGId}' ${addDayType} ${addDayPart}`;
-            console.log("Query for ALL times:", whereClause);
-            
-            queryTable.load().then(() => {
-                return queryTable.queryFeatures({
-                    where: whereClause,
-                    outFields: ["*"],
-                    returnGeometry: false
-                });
-            }).then(function(results) {
-                console.log("Query results:", {
-                    originId: clickedBGId,
-                    featuresFound: results.features.length
-                });
-                
-                if (!results.features.length) {
-                    console.log("No destinations found for origin:", clickedBGId);
-                    return;
-                }
-                
-                // Aggregate results by destination, summing across time periods AND days then divide by 5 if needed
-                const aggregatedTrips = {};
-                results.features.forEach(f => {
-                    const destId = f.attributes.Destination_Zone_ID.toString();
-                    const trips = parseInt(f.attributes[selectedPurpose]);
-                    
-                    aggregatedTrips[destId] = (aggregatedTrips[destId] || 0) + trips;                    
-                    aggregatedTrips[destId] = averagingDay ? Math.round(aggregatedTrips[destId] / 5) : aggregatedTrips[destId];
-
-                });
-                
-                // Store aggregated results
-                tripData[clickedBGId] = {};
-                Object.entries(aggregatedTrips).forEach(([destId, trips]) => {
-                    tripData[clickedBGId][destId] = trips;
-                });
-                
-                console.log("Results summary (All Times):", {
-                    originId: clickedBGId,
-                    totalDestinations: Object.keys(aggregatedTrips).length,
-                    totalTrips: Object.values(aggregatedTrips).reduce((sum, trips) => sum + trips, 0)
-                });
-
-                updateDisplay();
-            }).catch(error => {
-                console.error("Error querying all time periods:", error);
-            });
+            handleOriginClick(clickedBGId);
+        
         }).catch(error => {
             console.error("Error in hitTest:", error);
         });
     });
+        
+    function handleOriginClick(clickedBGId) {
+
+        // Use the appropriate table URL
+        // const tableUrl = 
+        
+        // Create a new feature layer for the query
+        const queryTable = new FeatureLayer({
+            url: "https://services3.arcgis.com/MV5wh5WkCMqlwISp/ArcGIS/rest/services/BCTA_Trip_Purpose/FeatureServer/1",
+            outFields: ["*"],
+            visible: false
+        });
+
+        let addDayPart;
+        let addDayType;
+        let averagingDay;
+
+        // Handling for selected day
+        if (selectedDay === "Proposed") {
+            addDayType = `AND Day_Type IN ('1: Monday (M-M)', '2: Tuesday (Tu-Tu)', '3: Wednesday (W-W)', '4: Thursday (Th-Th)', '5: Friday (F-F)')`
+            averagingDay = true;
+        } else {
+            addDayType =  ` AND Day_Type = '${selectedDay}'`
+            averagingDay = false;
+        }
+        
+        // Handling for selected time
+        if (selectedTime === "Proposed") {
+            addDayPart = ``
+        } else {
+            addDayPart = `AND Day_Part = '${selectedTime}'`
+        }
+        
+        // Generate query
+        const whereClause = `Origin_Zone_ID = '${clickedBGId}' ${addDayType} ${addDayPart}`;
+        console.log("Query for ALL times:", whereClause);
+        
+        queryTable.load().then(() => {
+            return queryTable.queryFeatures({
+                where: whereClause,
+                outFields: ["Origin_Zone_ID", "Destination_Zone_ID", "Day_Type", "Day_Part", selectedPurpose],
+                returnGeometry: false
+            });
+        }).then(function(results) {
+            console.log("Query results:", {
+                originId: clickedBGId,
+                featuresFound: results.features.length
+            });
+            
+            if (!results.features.length) {
+                console.log("No destinations found for origin:", clickedBGId);
+                return;
+            }
+            
+            // Aggregate results by destination, summing across time periods AND days then divide by 5 if needed
+            const aggregatedTrips = {};
+            results.features.forEach(f => {
+                const destId = f.attributes.Destination_Zone_ID.toString();
+                const trips = parseInt(f.attributes[selectedPurpose]);
+                
+                aggregatedTrips[destId] = (aggregatedTrips[destId] || 0) + trips;                    
+                aggregatedTrips[destId] = averagingDay ? Math.round(aggregatedTrips[destId] / 5) : aggregatedTrips[destId];
+
+            });
+            
+            // Store aggregated results
+            tripData[clickedBGId] = {};
+            Object.entries(aggregatedTrips).forEach(([destId, trips]) => {
+                tripData[clickedBGId][destId] = trips;
+            });
+            
+            console.log("Results summary (All Times):", {
+                originId: clickedBGId,
+                totalDestinations: Object.keys(aggregatedTrips).length,
+                totalTrips: Object.values(aggregatedTrips).reduce((sum, trips) => sum + trips, 0)
+            });
+
+            updateDisplay();
+        }).catch(error => {
+            console.error("Error querying all time periods:", error);
+        });
+    }
 
     // Modify the updateDisplay function
     function updateDisplay() {
@@ -435,6 +468,7 @@ require([
 
         if (selectedOrigins.size === 0) {
             document.getElementById("sidePanel").style.display = "none";
+            beaverCountyBG.renderer = initialRenderer;
             return;
         }
 
@@ -442,6 +476,14 @@ require([
         const originQuery = beaverCountyBG.createQuery();
         originQuery.where = `GEOID IN (${originIds})`;
         originQuery.outFields = ["GEOID"];
+
+        // Generate classbreaks dynamically for future use        
+        const sortedCounts = Object.values(tripData).flatMap(destObj => Object.values(destObj)).sort((a, b) => a - b);
+        if (sortedCounts[sortedCounts.length - 1] > 200) {
+            beaverCountyBG.renderer = generateRenderer(generateClassBreaks(sortedCounts));
+        } else {
+           beaverCountyBG.renderer = generateRenderer([5, 10, 25, 50]);
+        }
 
         beaverCountyBG.queryFeatures(originQuery).then(function(originResults) {
             // Calculate combined trips for all destinations
@@ -502,17 +544,14 @@ require([
     // Function to update side panel content
     function updateSidePanel(originFeatures, combinedTrips) {
         const sidePanel = document.getElementById("sidePanel") || createSidePanel();
-        
-        // Change header
-        const modeTitle = selectedPurpose.replaceAll("_", " ").replace("Trip","");
-        
+
         let content = `
             <div style="text-align: right;">
                 <button onclick="this.parentElement.parentElement.style.display='none'" 
                         style="border: none; background: none; cursor: pointer;">✕</button>
             </div>
             <h3 style="margin-block-start:0px; margin-block-end:0px;">Selected Block Groups</h3>
-            <p style="margin-block-start:0px;"><em>${modeTitle} Trips</em></p>
+            <p style="margin-block-start:0px;"><em>${tripPurposeLabel} Trips</em></p>
         `;
 
         originFeatures.forEach(feature => {
@@ -538,7 +577,7 @@ require([
         sidePanel.id = "sidePanel";
         sidePanel.style.cssText = `
             position: absolute;
-            left: 35px;
+            left: 39px;
             background: white;
             padding: 15px;
             border-radius: 3px;
@@ -546,7 +585,7 @@ require([
             width: 270px;
             z-index: 1000;
             display: none;
-            max-height: 400px;
+            max-height: 300%;
             overflow-y: auto;
         `;
         view.ui.add(sidePanel, "top-left");
@@ -567,8 +606,6 @@ require([
 
             const hoveredBGId = result.graphic.attributes.GEOID;
             let tooltipContent = `<strong>Block Group:</strong> ${hoveredBGId}`;
-
-            const tripType = selectedPurpose.replaceAll("_", " ").replace("Trip","");
             
             // Check if this is a selected origin
             if (selectedOrigins.has(hoveredBGId)) {
@@ -581,13 +618,13 @@ require([
                 });
                 
                 if (totalInbound > 0) {
-                    tooltipContent += `<br><strong>Inbound ${tripType} Trips:</strong> ${totalInbound}`;
+                    tooltipContent += `<br><strong>Inbound ${tripPurposeLabel} Trips:</strong> ${totalInbound}`;
                 }
 
                 // Show total outbound trips for this origin
                 const totalOutbound = Object.values(tripData[hoveredBGId] || {}).reduce((sum, trips) => sum + trips, 0);
                 if (totalOutbound > 0) {
-                    tooltipContent += `<br><strong>Total Outbound ${tripType} Trips:</strong> ${totalOutbound}`;
+                    tooltipContent += `<br><strong>Total Outbound ${tripPurposeLabel} Trips:</strong> ${totalOutbound}`;
                 }
                 
             } else if (selectedOrigins.size > 0) {
@@ -599,7 +636,7 @@ require([
                 });
 
                 if (totalInbound > 0) {
-                    tooltipContent += `<br><strong>Inbound ${tripType} Trips:</strong> ${totalInbound}`;
+                    tooltipContent += `<br><strong>Inbound ${tripPurposeLabel} Trips:</strong> ${totalInbound}`;
                 } else {
                     tooltipContent += `<br><em>No trips to this area</em>`;
                 }
@@ -622,4 +659,5 @@ require([
 
     // Initialize side panel
     createSidePanel();
+
 });
