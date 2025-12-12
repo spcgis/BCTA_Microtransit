@@ -381,9 +381,6 @@ require([
     });
         
     function handleOriginClick(clickedBGId) {
-
-        // Use the appropriate table URL
-        // const tableUrl = 
         
         // Create a new feature layer for the query
         const queryTable = new FeatureLayer({
@@ -407,7 +404,7 @@ require([
         
         // Handling for selected time
         if (selectedTime === "Proposed") {
-            addDayPart = ``
+            addDayPart = `AND Day_Part NOT IN ('00: All Day (12am-12am)')`
         } else {
             addDayPart = `AND Day_Part = '${selectedTime}'`
         }
@@ -440,14 +437,12 @@ require([
                 const trips = parseInt(f.attributes[selectedPurpose]);
                 
                 aggregatedTrips[destId] = (aggregatedTrips[destId] || 0) + trips;                    
-                aggregatedTrips[destId] = averagingDay ? Math.round(aggregatedTrips[destId] / 5) : aggregatedTrips[destId];
-
             });
-            
+
             // Store aggregated results
             tripData[clickedBGId] = {};
             Object.entries(aggregatedTrips).forEach(([destId, trips]) => {
-                tripData[clickedBGId][destId] = trips;
+                tripData[clickedBGId][destId] = averagingDay ? Math.round(trips / 5) : trips;
             });
             
             console.log("Results summary (All Times):", {
