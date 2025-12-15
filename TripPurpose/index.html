@@ -5,13 +5,42 @@
     <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
     <title>Beaver County Transit Trip Purpose</title>
     <link rel="stylesheet" href="https://js.arcgis.com/4.32/esri/themes/light/main.css">
+    <link rel="stylesheet" href="./assets/styles.css">
     <script src="https://js.arcgis.com/4.32/"></script>
-    <style>
-        html, body, #viewDiv { padding: 0; margin: 0; height: 100%; width: 100%; }
-    </style>
+    <script src="./assets/app.js"></script>
 </head>
 <body>
-    <div id="viewDiv"></div>
-    <script src="app.js"></script>
+    <div class = "container">
+    <!-- Upper block: Container of GUI -->
+        <div class = "header-container">
+            <button id="toggleHeader" class="toggle-arrow">▲</button>
+            <!-- Left block: Header content -->
+            <div class = "main-header">
+                <h2 style="font-family:Helvetica; margin-bottom:0px;">Origin-Destination Trip Counts by Day and Time for BCTA Microtransit Service Proposal</h2>
+                <p style="font-family:Helvetica; font-size:medium;">Select a filter for trip purpose, day of week, and time period. Click on a block group to select it as the origin.</p>
+                <p style="font-family:Arial; font-size:smaller;"><em>Data Source:</em> Streetlight Insight, O-D Traveler Attributes, All Vehicles LBS+, Analysis timeframe 1/21-12/21</p>
+            </div>
+            <!-- Right block: Logos -->
+            <div class = "logos">
+                <img src="./assets/SPC_Wht.png" style="height: clamp(70px, 75px, 85px); width: auto;"/>
+            </div>
+        </div>
+        <!-- Lower block: the Map -->
+        <div id="viewDiv"></div>
+    </div>
+    <script>    
+    // Configure the expansion arrow
+    document.addEventListener("DOMContentLoaded", () => {
+        const header = document.querySelector(".header-container");
+        const btn = document.getElementById("toggleHeader");
+
+        btn.addEventListener("click", () => {
+            header.classList.toggle("header-collapsed");
+
+            // Update arrow direction
+            btn.textContent = header.classList.contains("header-collapsed") ? "▼" : "▲";
+        });
+    });
+    </script>
 </body>
 </html>
