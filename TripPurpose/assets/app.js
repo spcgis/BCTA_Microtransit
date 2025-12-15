@@ -328,6 +328,7 @@ require([
         return roundedBreaks.slice(1);
     }
     
+    // Get the appropriate 
     function getColorFromRenderer(renderer, tripCount) {
         const breakInfo = renderer.classBreakInfos.find(info => 
             tripCount >= info.minValue && tripCount <= info.maxValue
@@ -471,7 +472,7 @@ require([
         originQuery.where = `GEOID IN (${originIds})`;
         originQuery.outFields = ["GEOID"];
 
-        // Generate classbreaks dynamically for future use        
+        // Generate classbreaks dynamically        
         const sortedCounts = Object.values(tripData).flatMap(destObj => Object.values(destObj)).sort((a, b) => a - b);
         if (sortedCounts[sortedCounts.length - 1] > 200) {
             beaverCountyBG.renderer = generateRenderer(generateClassBreaks(sortedCounts));
