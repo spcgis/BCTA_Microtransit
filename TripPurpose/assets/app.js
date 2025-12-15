@@ -5,7 +5,6 @@ require([
     "esri/widgets/Legend",
     "esri/widgets/Expand",
 ], function(Map, MapView, FeatureLayer, Legend, Expand) {
-
     // Initialize map with neutral basemap
     const map = new Map({
         basemap: "gray-vector"
@@ -42,7 +41,7 @@ require([
         font-size: 12px;
         box-shadow: 0 2px 4px rgba(0,0,0,0.2);
     `;
-    document.body.appendChild(tooltip);
+    view.ui.add(tooltip);
 
     // Create filter container
     const filterDiv = document.createElement("div");
