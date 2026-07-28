@@ -1,2 +1,2 @@
-# GreeneCoTransit
-Greene County Transit BGs OD
+# BCTA Trip Purpose
+Beaver County Transit BGs OD
