@@ -1,0 +1,102 @@
+body, html {
+    margin: 0px;
+    padding: 0px;
+    height: 100%;
+}
+#viewDiv {
+    padding: 0;
+    margin: 0;
+    display: flex;
+    width: 100%;
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
+#filterContainer select {
+    width: 100%;
+}
+
+#filterContainer {
+    width: 200px;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    height: 100vh;
+    overflow-y: hidden;
+}
+.header-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 100%;
+    background-color: #2e55a5;
+    position: relative;
+}
+
+.toggle-arrow {
+    position: absolute;
+    bottom: -20px; 
+    right: 5px;
+    transform: translateX(-50%);
+    background-color: #2e55a5;  
+    color: white;
+    border: none;
+    padding: 4px 10px;
+    border-radius: 0 0 8px 8px; 
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    z-index: 20;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.25);
+}
+
+.header-collapsed .toggle-arrow {
+    bottom: auto;
+}
+
+.header-collapsed .main-header,
+.header-collapsed .logos {
+    display: none !important;
+}
+
+.main-header{
+    width: 85%; 
+    color: white;
+}
+.main-header > p {
+    margin-left: 15px;
+}
+.main-header > h2 {
+    margin-left: 15px;
+}
+
+.logos{
+    display: flex;
+    flex-direction: row-reverse;
+    flex-wrap: wrap;
+    align-content: center;
+    justify-content: flex-start;
+    align-items: center;
+    width: 14%;
+    gap: 15px;
+    margin-right: 1%;
+}
+
+.controls {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap
+}
+
+/* Media query to hide .logos on small screens */
+@media (max-width: 768px) {
+    .logos {
+    display: none;
+    }
+    .main-header {
+        width: 100%;
+    }
+}
