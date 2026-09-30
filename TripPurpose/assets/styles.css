@@ -3,27 +3,19 @@ body, html {
     padding: 0px;
     height: 100%;
 }
-#viewDiv {
-    padding: 0;
-    margin: 0;
-    display: flex;
-    width: 100%;
-    flex: 1 1 auto;
+/* Main map*/
+
+#map {
+    flex: 1 1 0;
     min-height: 0;
-}
-
-#filterContainer select {
     width: 100%;
-}
-
-#filterContainer {
-    width: 200px;
+    height: 0
 }
 
 .container {
     display: flex;
     flex-direction: column;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     height: 100vh;
     overflow-y: hidden;
 }
@@ -89,6 +81,31 @@ body, html {
     display: flex;
     gap: 20px;
     flex-wrap: wrap
+}
+
+#filterContainer {
+    background: white;
+    padding: 10px;
+    border-radius: 3px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    width: 200px;
+    font-size: small;
+}
+
+#filterContainer select {
+    width: 100%;
+}
+
+#sidePanel {
+    background: white;
+    padding: 15px;
+    border-radius: 3px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    width: 270px;
+    display: none;
+    max-height: 200px;
+    font-size: small;
+    overflow-y: auto;
 }
 
 /* Media query to hide .logos on small screens */
